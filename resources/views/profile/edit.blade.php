@@ -173,14 +173,19 @@ class="w-full text-left px-5 py-3 text-red-600 hover:bg-gray-100">
 
 <p class="text-blue-100">
 
+@if(Auth::user()->role == 'admin')
+
+Administrateur ProxiBouaké
+
+@elseif(Auth::user()->role == 'prestataire')
+
+Prestataire ProxiBouaké
+
+@else
+
 Client ProxiBouaké
 
-</p>
-
-
-<p class="text-blue-100">
-
-{{ Auth::user()->email }}
+@endif
 
 </p>
 
@@ -241,6 +246,26 @@ Sécurité
 
 
 
+<!-- DEVENIR PRESTATAIRE -->
+
+<div class="bg-white rounded-3xl shadow p-8 mt-8">
+
+<h2 class="text-2xl font-bold mb-4">
+Devenir prestataire
+</h2>
+
+<p class="text-gray-600 mb-6">
+Vous proposez un service ? Rejoignez ProxiBouaké en tant que prestataire.
+</p>
+
+<a href="{{ route('prestataire.create') }}"
+class="inline-block px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700">
+
+🚀 Devenir prestataire
+
+</a>
+
+</div>
 
 
 

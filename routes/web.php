@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\PrestataireController;
 
 
 Route::resource('categories', CategoryController::class);
@@ -52,3 +53,17 @@ Route::prefix('admin')
         })->name('admin.dashboard');
 
     });
+
+
+    Route::middleware('auth')->group(function(){
+
+    Route::get('/devenir-prestataire', 
+        [PrestataireController::class,'create']
+    )->name('prestataire.create');
+
+
+    Route::post('/devenir-prestataire',
+        [PrestataireController::class,'store']
+    )->name('prestataire.store');
+
+});
