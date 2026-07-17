@@ -55,6 +55,10 @@ class PrestataireController extends Controller
 
             'experience' => $request->experience,
 
+            'latitude' => $request->latitude,
+
+            'longitude' => $request->longitude,
+
             'statut' => 'en_attente',
 
         ]);

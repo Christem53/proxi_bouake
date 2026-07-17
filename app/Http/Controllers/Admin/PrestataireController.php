@@ -161,4 +161,52 @@ public function refuserPrestation($id)
 
 }
 
+/**
+ * Désactiver une prestation
+ */
+public function desactiverPrestation($id)
+{
+
+    $prestation = Prestation::findOrFail($id);
+
+
+    $prestation->update([
+
+        'statut' => 'inactif'
+
+    ]);
+
+
+    return redirect()
+        ->route('admin.prestations.index')
+        ->with('success','Prestation désactivée avec succès');
+
+}
+
+
+
+
+
+/**
+ * Réactiver une prestation
+ */
+public function reactiverPrestation($id)
+{
+
+    $prestation = Prestation::findOrFail($id);
+
+
+    $prestation->update([
+
+        'statut' => 'actif'
+
+    ]);
+
+
+    return redirect()
+        ->route('admin.prestations.index')
+        ->with('success','Prestation réactivée avec succès');
+
+}
+
 }

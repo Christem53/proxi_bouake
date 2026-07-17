@@ -34,6 +34,11 @@ Validez ou refusez les prestations proposées par les prestataires sur ProxiBoua
 
 
 <th class="p-4 text-left">
+Image
+</th>
+
+
+<th class="p-4 text-left">
 Titre
 </th>
 
@@ -82,7 +87,40 @@ Action
 
 
 
+<!-- IMAGE -->
+
 <td class="p-4">
+
+
+@if($prestation->image)
+
+
+<img src="{{ asset('storage/'.$prestation->image) }}"
+class="w-16 h-16 rounded-xl object-cover">
+
+
+@else
+
+
+<div class="w-16 h-16 rounded-xl bg-gray-200 flex items-center justify-center">
+
+📷
+
+</div>
+
+
+@endif
+
+
+</td>
+
+
+
+
+
+<!-- TITRE -->
+
+<td class="p-4 font-semibold">
 
 {{ $prestation->titre }}
 
@@ -91,6 +129,8 @@ Action
 
 
 
+
+<!-- PRESTATAIRE -->
 
 <td class="p-4">
 
@@ -102,35 +142,65 @@ Action
 
 
 
+<!-- CATEGORIE -->
+
 <td class="p-4">
 
-{{ $prestation->category->icon }}
+
+<div class="flex items-center gap-2">
+
+
+<i 
+data-lucide="{{ $prestation->category->icon }}"
+class="w-5 h-5 text-blue-600">
+</i>
+
+
+<span>
 
 {{ $prestation->category->name }}
 
+</span>
+
+
+</div>
+
+
 </td>
 
 
 
 
+
+
+<!-- PRIX -->
 
 <td class="p-4">
 
+
 @if($prestation->prix)
+
 
 {{ number_format($prestation->prix,0,' ',' ') }} FCFA
 
+
 @else
+
 
 Non défini
 
+
 @endif
+
 
 </td>
 
 
 
 
+
+
+<!-- STATUT -->
 
 <td class="p-4">
 
@@ -146,6 +216,8 @@ Actif
 
 
 
+
+
 @elseif($prestation->statut == 'refuse')
 
 
@@ -154,6 +226,21 @@ Actif
 Refusé
 
 </span>
+
+
+
+
+
+@elseif($prestation->statut == 'inactif')
+
+
+<span class="px-3 py-1 rounded-full bg-gray-200 text-gray-700">
+
+Désactivé
+
+</span>
+
+
 
 
 
@@ -170,11 +257,17 @@ En attente
 @endif
 
 
+
 </td>
 
 
 
 
+
+
+
+
+<!-- ACTION -->
 
 <td class="p-4 text-center">
 
@@ -186,11 +279,11 @@ En attente
 <div class="flex justify-center gap-3">
 
 
-
 <form action="{{ route('admin.prestations.accepter',$prestation->id) }}"
 method="POST">
 
 @csrf
+
 
 <button
 class="px-4 py-2 rounded-xl bg-green-500 text-white hover:bg-green-600">
@@ -211,6 +304,7 @@ method="POST">
 
 @csrf
 
+
 <button
 class="px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600">
 
@@ -222,8 +316,62 @@ Refuser
 </form>
 
 
-
 </div>
+
+
+
+
+
+
+
+@elseif($prestation->statut == 'actif')
+
+
+
+<form action="{{ route('admin.prestations.desactiver',$prestation->id) }}"
+method="POST">
+
+@csrf
+
+
+<button
+class="px-4 py-2 rounded-xl bg-orange-500 text-white hover:bg-orange-600">
+
+Désactiver
+
+</button>
+
+
+</form>
+
+
+
+
+
+
+
+@elseif($prestation->statut == 'inactif')
+
+
+
+<form action="{{ route('admin.prestations.reactiver',$prestation->id) }}"
+method="POST">
+
+@csrf
+
+
+<button
+class="px-4 py-2 rounded-xl bg-blue-500 text-white hover:bg-blue-600">
+
+Réactiver
+
+</button>
+
+
+</form>
+
+
+
 
 
 
@@ -235,7 +383,6 @@ Refuser
 Aucune action
 
 </span>
-
 
 
 @endif
@@ -253,15 +400,17 @@ Aucune action
 @empty
 
 
+
 <tr>
 
-<td colspan="6" class="p-8 text-center text-gray-500">
+<td colspan="7" class="p-8 text-center text-gray-500">
 
 Aucune prestation trouvée.
 
 </td>
 
 </tr>
+
 
 
 @endforelse

@@ -14,6 +14,17 @@ Demandes de prestataires
 Gérez les utilisateurs qui souhaitent proposer leurs services sur ProxiBouaké.
 </p>
 
+<div class="mb-6 flex justify-end">
+
+<a href="{{ route('admin.prestations.index') }}"
+class="px-6 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700">
+
+🛠 Gestion des prestations
+
+</a>
+
+</div>
+
 
 </div>
 
@@ -90,9 +101,18 @@ Action
 
 <td class="p-4">
 
-{{ $prestataire->category->icon }}
+<div class="flex items-center gap-3">
 
+<i 
+data-lucide="{{ $prestataire->category->icon }}"
+class="w-6 h-6 text-blue-600">
+</i>
+
+<span>
 {{ $prestataire->category->name }}
+</span>
+
+</div>
 
 </td>
 

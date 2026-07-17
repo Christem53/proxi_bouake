@@ -22,6 +22,8 @@ class Prestataire extends Model
     'experience',
     'disponible',
     'statut',
+    'latitude',
+    'longitude',
 ];
 
 public function user()

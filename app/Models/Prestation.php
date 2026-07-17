@@ -34,4 +34,8 @@ class Prestation extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function scopeActives($query)
+{
+    return $query->where('statut','actif');
+}
 }

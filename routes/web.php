@@ -5,9 +5,11 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PrestataireController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\PrestationsController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\PrestataireController as AdminPrestataireController;
 
 use Illuminate\Support\Facades\Route;
+
 
 
 /*
@@ -17,16 +19,22 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-// Gestion des catégories (visible publiquement pour le moment)
+// Page vitrine ProxiBouaké
+Route::get('/', 
+    [HomeController::class,'index']
+)->name('home');
+
+Route::get('/recherche',
+    [HomeController::class,'search']
+)->name('search');
+
+
+
+// Catégories publiques
 Route::resource('categories', CategoryController::class);
 
 
-// Page d'accueil du site
-Route::get('/', function () {
 
-    return view('home.index');
-
-});
 
 
 
@@ -38,34 +46,18 @@ Route::get('/', function () {
 */
 
 
-// Toutes les routes ici nécessitent :
-// - un utilisateur connecté (auth)
-// - le rôle admin (middleware admin)
-// - la protection contre le cache navigateur (nocache)
-
 Route::prefix('admin')
     ->middleware(['auth','admin','nocache'])
     ->group(function(){
 
-    
-Route::get('/prestations',
-    [AdminPrestataireController::class,'prestations']
-)->name('admin.prestations.index');
 
-Route::post('/prestations/{id}/accepter',
-    [AdminPrestataireController::class,'accepterPrestation']
-)->name('admin.prestations.accepter');
-
-
-Route::post('/prestations/{id}/refuser',
-    [AdminPrestataireController::class,'refuserPrestation']
-)->name('admin.prestations.refuser');
 
         /*
         |--------------------------------------------------------------------------
-        | Tableau de bord administrateur
+        | Dashboard Admin
         |--------------------------------------------------------------------------
         */
+
 
         Route::get('/dashboard', function(){
 
@@ -77,20 +69,57 @@ Route::post('/prestations/{id}/refuser',
 
 
 
+
+
         /*
         |--------------------------------------------------------------------------
-        | Gestion des catégories
+        | Gestion prestations
         |--------------------------------------------------------------------------
-        |
-        | Crée automatiquement :
-        | categories.index
-        | categories.create
-        | categories.store
-        | categories.edit
-        | categories.update
-        | categories.destroy
-        |
         */
+
+
+        Route::get('/prestations',
+            [AdminPrestataireController::class,'prestations']
+        )->name('admin.prestations.index');
+
+
+
+        Route::post('/prestations/{id}/accepter',
+            [AdminPrestataireController::class,'accepterPrestation']
+        )->name('admin.prestations.accepter');
+
+
+
+        Route::post('/prestations/{id}/refuser',
+            [AdminPrestataireController::class,'refuserPrestation']
+        )->name('admin.prestations.refuser');
+
+
+
+        Route::post('/prestations/{id}/desactiver',
+            [AdminPrestataireController::class,'desactiverPrestation']
+        )->name('admin.prestations.desactiver');
+
+
+
+        Route::post('/prestations/{id}/reactiver',
+            [AdminPrestataireController::class,'reactiverPrestation']
+        )->name('admin.prestations.reactiver');
+
+
+
+
+
+
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Gestion catégories
+        |--------------------------------------------------------------------------
+        */
+
 
         Route::resource('categories', CategoryController::class);
 
@@ -98,11 +127,15 @@ Route::post('/prestations/{id}/refuser',
 
 
 
+
+
+
         /*
         |--------------------------------------------------------------------------
-        | Gestion des utilisateurs
+        | Gestion utilisateurs
         |--------------------------------------------------------------------------
         */
+
 
         Route::resource('users', UserController::class);
 
@@ -111,40 +144,26 @@ Route::post('/prestations/{id}/refuser',
 
 
 
+
+
+
         /*
         |--------------------------------------------------------------------------
-        | Gestion des demandes prestataires
+        | Gestion demandes prestataires
         |--------------------------------------------------------------------------
-        |
-        | Création automatique des routes :
-        |
-        | prestataires.index  => liste des demandes
-        | prestataires.show   => voir une demande
-        | prestataires.destroy => supprimer
-        |
         */
+
 
         Route::resource('prestataires', AdminPrestataireController::class);
 
 
 
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Actions accepter / refuser une demande
-        |--------------------------------------------------------------------------
-        */
-
-
-        // Accepter un prestataire
         Route::post('/prestataires/{id}/accepter',
             [AdminPrestataireController::class,'accepter']
         )->name('prestataires.accepter');
 
 
 
-        // Refuser un prestataire
         Route::post('/prestataires/{id}/refuser',
             [AdminPrestataireController::class,'refuser']
         )->name('prestataires.refuser');
@@ -152,6 +171,9 @@ Route::post('/prestations/{id}/refuser',
 
 
     });
+
+
+
 
 
 
@@ -169,18 +191,30 @@ Route::middleware(['auth','nocache'])->group(function(){
 
 
 
+
+
+
     /*
     |--------------------------------------------------------------------------
-    | Dashboard client
+    | Dashboard utilisateur
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/dashboard', function () {
+
+    Route::get('/dashboard', function(){
+
 
         return view('dashboard');
 
-    })->middleware('verified')
-      ->name('dashboard');
+
+    })
+    ->middleware('verified')
+    ->name('dashboard');
+
+
+
+
+
 
 
 
@@ -214,6 +248,9 @@ Route::middleware(['auth','nocache'])->group(function(){
 
 
 
+
+
+
     /*
     |--------------------------------------------------------------------------
     | Demande pour devenir prestataire
@@ -221,34 +258,47 @@ Route::middleware(['auth','nocache'])->group(function(){
     */
 
 
-    // Affiche le formulaire
     Route::get('/devenir-prestataire',
         [PrestataireController::class,'create']
     )->name('demande.create');
 
 
 
-    // Enregistre la demande
     Route::post('/devenir-prestataire',
         [PrestataireController::class,'store']
     )->name('prestataire.store');
 
 
 
-});
 
-Route::middleware('auth')->group(function(){
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Gestion prestations du prestataire
+    |--------------------------------------------------------------------------
+    */
+
 
     Route::resource('prestations', PrestationsController::class);
 
+
+
 });
+
+
+
+
+
+
 
 
 
 /*
 |--------------------------------------------------------------------------
-| Authentification Breeze Laravel
+| Authentification Breeze
 |--------------------------------------------------------------------------
 */
+
 
 require __DIR__.'/auth.php';

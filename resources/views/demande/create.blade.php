@@ -422,8 +422,32 @@ class="w-full rounded-xl border-gray-300 px-4 py-3">
 </div>
 
 
+<input type="hidden" name="latitude" id="latitude">
+
+<input type="hidden" name="longitude" id="longitude">
 
 
+
+<div class="mb-6">
+
+    <label class="block font-semibold mb-2">
+        Localisation
+    </label>
+
+    <button
+        type="button"
+        onclick="getLocation()"
+        class="px-5 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700">
+
+        📍 Utiliser ma position actuelle
+
+    </button>
+
+    <p id="locationStatus" class="text-sm text-gray-500 mt-3">
+        Aucune position détectée.
+    </p>
+
+</div>
 
 
 <button
@@ -457,9 +481,50 @@ Envoyer ma demande
 
 function toggleMenu(){
 
-let menu=document.getElementById('userMenu');
+    let menu = document.getElementById('userMenu');
 
-menu.classList.toggle('hidden');
+    menu.classList.toggle('hidden');
+
+}
+
+
+
+function getLocation(){
+
+    if(!navigator.geolocation){
+
+        alert("La géolocalisation n'est pas supportée par votre navigateur.");
+
+        return;
+
+    }
+
+    document.getElementById('locationStatus').innerHTML =
+        "Recherche de votre position...";
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position){
+
+            document.getElementById('latitude').value =
+                position.coords.latitude;
+
+            document.getElementById('longitude').value =
+                position.coords.longitude;
+
+            document.getElementById('locationStatus').innerHTML =
+                "✅ Position enregistrée avec succès.";
+
+        },
+
+        function(){
+
+            document.getElementById('locationStatus').innerHTML =
+                "❌ Impossible de récupérer votre position.";
+
+        }
+
+    );
 
 }
 
