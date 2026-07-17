@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Prestataire;
 
 #[Fillable(['name', 'email', 'phone', 'ville', 
 'quartier', 'photo', 'role','password'])]
@@ -30,4 +31,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function prestataire()
+{
+    return $this->hasOne(Prestataire::class);
+}
 }

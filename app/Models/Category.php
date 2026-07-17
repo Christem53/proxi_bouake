@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Prestataire;
 
 class Category extends Model
 {
@@ -13,5 +14,10 @@ class Category extends Model
         'icon',
         'status'
     ];
+
+    public function prestataires()
+{
+    return $this->hasMany(Prestataire::class);
+}
 
 }
