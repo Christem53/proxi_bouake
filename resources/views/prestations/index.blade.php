@@ -16,13 +16,9 @@
 <body class="bg-gray-100 text-gray-900">
 
 
-
-<!-- NAVBAR -->
-
 <nav class="bg-white shadow">
 
 <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
 
 
 <h1 class="text-2xl font-bold text-blue-600">
@@ -30,11 +26,7 @@
 </h1>
 
 
-
-
-
 <div class="flex items-center gap-6">
-
 
 
 <a href="/dashboard"
@@ -43,7 +35,6 @@ class="text-gray-600 hover:text-blue-600">
 Accueil
 
 </a>
-
 
 
 <a href="#"
@@ -55,10 +46,6 @@ Mes demandes
 
 
 
-
-
-<!-- PROFIL DROPDOWN -->
-
 <div class="relative">
 
 
@@ -67,27 +54,20 @@ onclick="toggleMenu()"
 class="flex items-center gap-3">
 
 
-
 <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
 
-
 {{ strtoupper(substr(Auth::user()->name,0,1)) }}
-
 
 </div>
 
 
-
-
 <div class="text-left">
-
 
 <p class="font-semibold">
 
 {{ Auth::user()->name }}
 
 </p>
-
 
 
 <p class="text-sm text-gray-500">
@@ -97,24 +77,15 @@ Prestataire
 </p>
 
 
-
 </div>
-
 
 
 </button>
 
 
 
-
-
-
-
 <div id="userMenu"
 class="hidden absolute right-0 mt-3 w-52 bg-white rounded-xl shadow-lg z-50">
-
-
-
 
 
 <a href="{{ route('profile.edit') }}"
@@ -123,8 +94,6 @@ class="block px-5 py-3 hover:bg-gray-100">
 👤 Mon profil
 
 </a>
-
-
 
 
 
@@ -137,22 +106,15 @@ class="block px-5 py-3 hover:bg-gray-100">
 
 
 
-
-
-
-
 <form method="POST" action="{{ route('logout') }}">
 
 @csrf
 
 
-
 <button type="submit"
 class="w-full text-left px-5 py-3 text-red-600 hover:bg-gray-100">
 
-
 🚪 Déconnexion
-
 
 </button>
 
@@ -160,21 +122,13 @@ class="w-full text-left px-5 py-3 text-red-600 hover:bg-gray-100">
 </form>
 
 
-
+</div>
 
 
 </div>
 
 
-
-
 </div>
-
-
-
-
-</div>
-
 
 
 </div>
@@ -185,29 +139,19 @@ class="w-full text-left px-5 py-3 text-red-600 hover:bg-gray-100">
 
 
 
-
-<!-- CONTENU -->
-
-
 <div class="max-w-6xl mx-auto py-10 px-6">
-
-
-
 
 
 <div class="flex justify-between items-center mb-8">
 
 
-
 <div>
-
 
 <h2 class="text-3xl font-bold">
 
 Mes prestations
 
 </h2>
-
 
 
 <p class="text-gray-600 mt-2">
@@ -221,18 +165,12 @@ Gérez vos services publiés sur ProxiBouaké.
 
 
 
-
-
 <a href="{{ route('prestations.create') }}"
 class="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700">
 
-
 ➕ Ajouter une prestation
 
-
 </a>
-
-
 
 
 </div>
@@ -241,16 +179,55 @@ class="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700">
 
 
 
-
-
-
 @if(session('success'))
-
 
 <div class="bg-green-100 text-green-700 p-4 rounded-xl mb-6">
 
-
 {{ session('success') }}
+
+</div>
+
+@endif
+
+
+
+
+
+<div class="grid md:grid-cols-3 gap-6">
+
+
+
+@forelse($prestations as $prestation)
+
+
+
+<div class="bg-white rounded-3xl shadow overflow-hidden">
+
+
+
+{{-- IMAGE DE LA PRESTATION --}}
+
+
+
+@if($prestation->image)
+
+
+<img src="{{ asset('storage/'.$prestation->image) }}"
+
+class="w-full h-48 object-cover">
+
+
+@else
+
+
+<div class="w-full h-48 bg-gray-100 flex items-center justify-center">
+
+
+<i 
+data-lucide="{{ $prestation->category->icon }}"
+class="w-8 h-8 text-blue-600"
+aria-hidden="true">
+</i>
 
 
 </div>
@@ -262,36 +239,18 @@ class="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700">
 
 
 
-
-
-<div class="grid md:grid-cols-3 gap-6">
-
-
-
-
-
-@forelse($prestations as $prestation)
-
-
-
-
-
-<div class="bg-white rounded-3xl shadow p-6">
-
-
+<div class="p-6">
 
 
 
 <div class="flex items-center gap-3 mb-4">
 
 
-
-<span class="text-3xl">
-
-{{ $prestation->category->icon }}
-
-</span>
-
+<i 
+data-lucide="{{ $prestation->category->icon }}"
+class="w-8 h-8 text-blue-600"
+aria-hidden="true">
+</i>
 
 
 <h3 class="font-bold text-xl">
@@ -301,10 +260,7 @@ class="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700">
 </h3>
 
 
-
 </div>
-
-
 
 
 
@@ -322,20 +278,13 @@ class="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700">
 
 
 
-
-
 <p class="font-semibold">
-
 
 Catégorie :
 
 {{ $prestation->category->name }}
 
-
 </p>
-
-
-
 
 
 
@@ -346,11 +295,9 @@ Catégorie :
 
 <p class="mt-2">
 
-
 Prix :
 
 {{ number_format($prestation->prix) }} FCFA
-
 
 </p>
 
@@ -362,9 +309,9 @@ Prix :
 
 
 
+{{-- STATUT --}}
 
 <div class="mt-4">
-
 
 
 @if($prestation->statut == 'actif')
@@ -372,30 +319,34 @@ Prix :
 
 <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full">
 
-
-Actif
-
+🟢 Actif
 
 </span>
 
 
 
-@else
+@elseif($prestation->statut == 'en_attente')
 
 
+<span class="px-3 py-1 bg-yellow-100 text-yellow-600 rounded-full">
 
-<span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full">
-
-
-Inactif
-
+🟡 En attente
 
 </span>
 
+
+
+@elseif($prestation->statut == 'refuse')
+
+
+<span class="px-3 py-1 bg-red-100 text-red-600 rounded-full">
+
+🔴 Refusée
+
+</span>
 
 
 @endif
-
 
 
 </div>
@@ -406,34 +357,26 @@ Inactif
 
 
 
-
 <div class="flex gap-3 mt-6">
 
 
-
-<a href="#"
+<a href="{{ route('prestations.edit',$prestation->id) }}"
 class="px-4 py-2 bg-blue-600 text-white rounded-xl">
 
-
 Modifier
-
 
 </a>
 
 
 
 
-
-
-
-<form action="#"
+<form action="{{ route('prestations.destroy',$prestation->id) }}"
 method="POST">
 
 
 @csrf
 
 @method('DELETE')
-
 
 
 <button
@@ -446,21 +389,19 @@ Supprimer
 </button>
 
 
-
 </form>
 
 
 
+</div>
+
+
 
 </div>
 
 
 
-
-
-
 </div>
-
 
 
 
@@ -469,35 +410,24 @@ Supprimer
 
 
 
-
-
-
 <div class="col-span-3 bg-white rounded-2xl p-8 text-center">
 
 
 <h3 class="text-xl font-bold">
 
-
 Aucune prestation publiée
-
 
 </h3>
 
 
-
 <p class="text-gray-600 mt-2">
 
-
 Commencez par ajouter votre premier service.
-
 
 </p>
 
 
-
 </div>
-
-
 
 
 
@@ -505,20 +435,11 @@ Commencez par ajouter votre premier service.
 
 
 
-
-
-
 </div>
 
 
 
-
-
-
 </div>
-
-
-
 
 
 
@@ -530,25 +451,17 @@ Commencez par ajouter votre premier service.
 
 
 
-
 <script>
-
 
 function toggleMenu(){
 
-
 let menu=document.getElementById('userMenu');
-
 
 menu.classList.toggle('hidden');
 
-
 }
 
-
 </script>
-
-
 
 
 

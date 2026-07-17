@@ -47,7 +47,19 @@ Route::prefix('admin')
     ->middleware(['auth','admin','nocache'])
     ->group(function(){
 
+    
+Route::get('/prestations',
+    [AdminPrestataireController::class,'prestations']
+)->name('admin.prestations.index');
 
+Route::post('/prestations/{id}/accepter',
+    [AdminPrestataireController::class,'accepterPrestation']
+)->name('admin.prestations.accepter');
+
+
+Route::post('/prestations/{id}/refuser',
+    [AdminPrestataireController::class,'refuserPrestation']
+)->name('admin.prestations.refuser');
 
         /*
         |--------------------------------------------------------------------------

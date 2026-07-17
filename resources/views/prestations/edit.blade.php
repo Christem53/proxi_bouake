@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Publier une prestation - ProxiBouaké</title>
+<title>Modifier une prestation - ProxiBouaké</title>
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -16,8 +16,6 @@
 <body class="bg-gray-100 text-gray-900">
 
 
-
-<!-- NAVBAR -->
 
 <nav class="bg-white shadow">
 
@@ -29,37 +27,22 @@
 </h1>
 
 
-
 <div class="flex items-center gap-6">
 
 
-<a href="/dashboard"
+<a href="{{ route('prestations.index') }}"
 class="text-gray-600 hover:text-blue-600">
 
-Accueil
+Mes prestations
 
 </a>
 
 
-
-<a href="#"
-class="text-gray-600 hover:text-blue-600">
-
-Mes demandes
-
-</a>
-
-
-
-
-
-<!-- PROFIL DROPDOWN -->
 
 <div class="relative">
 
 
-<button 
-onclick="toggleMenu()"
+<button onclick="toggleMenu()"
 class="flex items-center gap-3">
 
 
@@ -70,28 +53,20 @@ class="flex items-center gap-3">
 </div>
 
 
-
-<div class="text-left">
+<div>
 
 <p class="font-semibold">
-
 {{ Auth::user()->name }}
-
 </p>
 
-
 <p class="text-sm text-gray-500">
-
 Prestataire
-
 </p>
 
 </div>
 
 
 </button>
-
-
 
 
 
@@ -107,23 +82,12 @@ class="block px-5 py-3 hover:bg-gray-100">
 </a>
 
 
-
-<a href="{{ route('prestations.index') }}"
-class="block px-5 py-3 hover:bg-gray-100">
-
-🛠 Mes prestations
-
-</a>
-
-
-
-
 <form method="POST" action="{{ route('logout') }}">
 
 @csrf
 
 
-<button type="submit"
+<button
 class="w-full text-left px-5 py-3 text-red-600 hover:bg-gray-100">
 
 🚪 Déconnexion
@@ -135,7 +99,6 @@ class="w-full text-left px-5 py-3 text-red-600 hover:bg-gray-100">
 
 
 </div>
-
 
 
 </div>
@@ -153,31 +116,24 @@ class="w-full text-left px-5 py-3 text-red-600 hover:bg-gray-100">
 
 
 
-
-<!-- CONTENU -->
-
-
 <div class="max-w-4xl mx-auto px-6 py-10">
 
 
 
 <div class="mb-8">
 
-
 <h2 class="text-3xl font-bold">
 
-Publier une prestation
+Modifier la prestation
 
 </h2>
 
 
-
 <p class="text-gray-600 mt-2">
 
-Présentez votre service aux utilisateurs de ProxiBouaké.
+Mettez à jour les informations de votre service.
 
 </p>
-
 
 </div>
 
@@ -190,12 +146,78 @@ Présentez votre service aux utilisateurs de ProxiBouaké.
 
 
 
-<form action="{{ route('prestations.store') }}"
+<form action="{{ route('prestations.update',$prestation->id) }}"
 method="POST"
 enctype="multipart/form-data">
 
 
 @csrf
+
+@method('PUT')
+
+
+
+
+
+
+<!-- IMAGE ACTUELLE -->
+
+
+@if($prestation->image)
+
+
+<div class="mb-6">
+
+
+<p class="font-semibold mb-3">
+Image actuelle
+</p>
+
+
+<img src="{{ asset('storage/'.$prestation->image) }}"
+class="w-40 h-40 object-cover rounded-xl">
+
+
+</div>
+
+
+@endif
+
+
+
+
+
+
+
+<!-- NOUVELLE IMAGE -->
+
+
+<div class="mb-6">
+
+
+<label class="block font-semibold mb-2">
+
+Changer l'image
+
+</label>
+
+
+<input type="file"
+name="image"
+class="w-full border rounded-xl px-4 py-3">
+
+
+@error('image')
+
+<p class="text-red-600 text-sm">
+{{ $message }}
+</p>
+
+@enderror
+
+
+</div>
+
 
 
 
@@ -206,7 +228,6 @@ enctype="multipart/form-data">
 
 
 <div class="mb-6">
-
 
 <label class="block font-semibold mb-2">
 
@@ -220,45 +241,24 @@ Catégorie
 class="w-full rounded-xl border-gray-300 px-4 py-3">
 
 
-<option value="">
-
-Choisir une catégorie
-
-</option>
-
-
-
 @foreach($categories as $category)
 
 
-<option value="{{ $category->id }}">
-
-
-{{ $category->icon }}
+<option value="{{ $category->id }}"
+@if($category->id == $prestation->category_id)
+selected
+@endif
+>
 
 {{ $category->name }}
 
-
 </option>
-
 
 
 @endforeach
 
 
-
 </select>
-
-
-@error('category_id')
-
-<p class="text-red-600 text-sm mt-2">
-
-{{ $message }}
-
-</p>
-
-@enderror
 
 
 </div>
@@ -275,92 +275,17 @@ Choisir une catégorie
 
 <div class="mb-6">
 
-
 <label class="block font-semibold mb-2">
 
-Titre de la prestation
+Titre
 
 </label>
 
 
-
-<input
-
-type="text"
-
+<input type="text"
 name="titre"
-
-value="{{ old('titre') }}"
-
-placeholder="Ex: Dépannage informatique"
-
+value="{{ old('titre',$prestation->titre) }}"
 class="w-full rounded-xl border-gray-300 px-4 py-3">
-
-
-
-@error('titre')
-
-<p class="text-red-600 text-sm mt-2">
-
-{{ $message }}
-
-</p>
-
-@enderror
-
-
-</div>
-
-
-
-
-
-
-
-
-<!-- IMAGE -->
-
-
-<div class="mb-6">
-
-
-<label class="block font-semibold mb-2">
-
-Image de la prestation
-
-</label>
-
-
-
-<input
-
-type="file"
-
-name="image"
-
-accept="image/*"
-
-class="w-full rounded-xl border-gray-300 px-4 py-3">
-
-
-
-<p class="text-sm text-gray-500 mt-2">
-
-Formats acceptés : JPG, PNG, JPEG (2 Mo maximum)
-
-</p>
-
-
-
-@error('image')
-
-<p class="text-red-600 text-sm mt-2">
-
-{{ $message }}
-
-</p>
-
-@enderror
 
 
 </div>
@@ -380,33 +305,15 @@ Formats acceptés : JPG, PNG, JPEG (2 Mo maximum)
 
 <label class="block font-semibold mb-2">
 
-Description du service
+Description
 
 </label>
 
 
-
 <textarea
-
 name="description"
-
 rows="5"
-
-placeholder="Décrivez votre service..."
-
-class="w-full rounded-xl border-gray-300 px-4 py-3">{{ old('description') }}</textarea>
-
-
-
-@error('description')
-
-<p class="text-red-600 text-sm mt-2">
-
-{{ $message }}
-
-</p>
-
-@enderror
+class="w-full rounded-xl border-gray-300 px-4 py-3">{{ old('description',$prestation->description) }}</textarea>
 
 
 </div>
@@ -431,30 +338,10 @@ Prix (FCFA)
 </label>
 
 
-
-<input
-
-type="number"
-
+<input type="number"
 name="prix"
-
-value="{{ old('prix') }}"
-
-placeholder="Ex: 15000"
-
+value="{{ old('prix',$prestation->prix) }}"
 class="w-full rounded-xl border-gray-300 px-4 py-3">
-
-
-
-@error('prix')
-
-<p class="text-red-600 text-sm mt-2">
-
-{{ $message }}
-
-</p>
-
-@enderror
 
 
 </div>
@@ -465,13 +352,11 @@ class="w-full rounded-xl border-gray-300 px-4 py-3">
 
 
 
-
-<div class="flex justify-between items-center">
+<div class="flex justify-between">
 
 
 <a href="{{ route('prestations.index') }}"
-
-class="px-5 py-3 rounded-xl bg-gray-200 hover:bg-gray-300">
+class="px-5 py-3 bg-gray-200 rounded-xl">
 
 Annuler
 
@@ -481,19 +366,15 @@ Annuler
 
 
 <button
+class="px-6 py-3 bg-blue-600 text-white rounded-xl">
 
-type="submit"
-
-class="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700">
-
-Publier la prestation
+Enregistrer les modifications
 
 </button>
 
 
 
 </div>
-
 
 
 
@@ -510,17 +391,11 @@ Publier la prestation
 
 
 
-
-
 <x-footer />
 
 
 
-
-
-
 <script>
-
 
 function toggleMenu(){
 
@@ -529,7 +404,6 @@ let menu=document.getElementById('userMenu');
 menu.classList.toggle('hidden');
 
 }
-
 
 </script>
 

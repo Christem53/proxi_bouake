@@ -10,7 +10,7 @@ Alpine.start();
 document.addEventListener('DOMContentLoaded', () => {
 
     createIcons({
-        icons
+        icons: icons
     });
 
 });
