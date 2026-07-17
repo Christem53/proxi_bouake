@@ -250,20 +250,26 @@ Sécurité
 
 <div class="bg-white rounded-3xl shadow p-8 mt-8">
 
-<h2 class="text-2xl font-bold mb-4">
-Devenir prestataire
-</h2>
+@if(Auth::user()->role == 'client')
 
-<p class="text-gray-600 mb-6">
-Vous proposez un service ? Rejoignez ProxiBouaké en tant que prestataire.
-</p>
-
-<a href="{{ route('prestataire.create') }}"
-class="inline-block px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700">
+<a href="{{ route('demande.create') }}"
+class="text-gray-600 hover:text-blue-600">
 
 🚀 Devenir prestataire
 
 </a>
+
+
+@elseif(Auth::user()->role == 'prestataire')
+
+<a href="{{ route('prestations.index') }}"
+class="text-gray-600 hover:text-blue-600">
+
+➕ Publier une prestation
+
+</a>
+
+@endif
 
 </div>
 
@@ -275,11 +281,7 @@ class="inline-block px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-70
 <div class="bg-white rounded-3xl shadow p-8 mt-8">
 
 
-<h2 class="text-2xl font-bold text-red-600 mb-6">
 
-Supprimer le compte
-
-</h2>
 
 
 @include('profile.partials.delete-user-form')

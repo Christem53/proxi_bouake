@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PrestataireController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\PrestationsController;
 use App\Http\Controllers\Admin\PrestataireController as AdminPrestataireController;
 
 use Illuminate\Support\Facades\Route;
@@ -211,7 +212,7 @@ Route::middleware(['auth','nocache'])->group(function(){
     // Affiche le formulaire
     Route::get('/devenir-prestataire',
         [PrestataireController::class,'create']
-    )->name('prestataire.create');
+    )->name('demande.create');
 
 
 
@@ -224,7 +225,11 @@ Route::middleware(['auth','nocache'])->group(function(){
 
 });
 
+Route::middleware('auth')->group(function(){
 
+    Route::resource('prestations', PrestationsController::class);
+
+});
 
 
 

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Prestataire;
+use App\Models\Prestation;
 
 #[Fillable(['name', 'email', 'phone', 'ville', 
 'quartier', 'photo', 'role','password'])]
@@ -35,5 +36,10 @@ class User extends Authenticatable
     public function prestataire()
 {
     return $this->hasOne(Prestataire::class);
+}
+
+public function prestations()
+{
+    return $this->hasMany(Prestation::class);
 }
 }

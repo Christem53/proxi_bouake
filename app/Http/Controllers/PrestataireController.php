@@ -14,7 +14,7 @@ class PrestataireController extends Controller
     {
         $categories = Category::all();
 
-        return view('prestataire.create', compact('categories'));
+        return view('demande.create', compact('categories'));
     }
 
 
