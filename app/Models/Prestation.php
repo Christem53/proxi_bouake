@@ -3,13 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
 class Prestation extends Model
 {
 
     protected $fillable = [
-
         'user_id',
         'category_id',
         'titre',
@@ -17,9 +15,7 @@ class Prestation extends Model
         'prix',
         'image',
         'statut'
-
     ];
-
 
 
     public function user()
@@ -28,14 +24,22 @@ class Prestation extends Model
     }
 
 
-
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function scopeActives($query)
-{
-    return $query->where('statut','actif');
-}
+
+    public function prestataire()
+    {
+        return $this->hasOneThrough(
+            Prestataire::class,
+            User::class,
+            'id',        // clé users
+            'user_id',   // clé prestataires
+            'user_id',   // clé prestations
+            'id'
+        );
+    }
+
 }

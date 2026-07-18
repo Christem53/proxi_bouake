@@ -7,6 +7,9 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\PrestationsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\PrestataireController as AdminPrestataireController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ServiceController;
+
 
 use Illuminate\Support\Facades\Route;
 
@@ -201,15 +204,13 @@ Route::middleware(['auth','nocache'])->group(function(){
     */
 
 
-    Route::get('/dashboard', function(){
+    Route::get('/dashboard',
+[DashboardController::class,'index'])
+->middleware('verified')
+->name('dashboard');
 
 
-        return view('dashboard');
 
-
-    })
-    ->middleware('verified')
-    ->name('dashboard');
 
 
 
@@ -289,7 +290,8 @@ Route::middleware(['auth','nocache'])->group(function(){
 
 
 
-
+Route::get('/services/{prestation}', [ServiceController::class,'show'])
+->name('services.show');
 
 
 

@@ -177,7 +177,7 @@ Demandes envoyées
 </h3>
 
 <p class="text-3xl font-bold text-blue-600">
-0
+{{ $demandesEnvoyees }}
 </p>
 
 </div>
@@ -192,7 +192,7 @@ Services terminés
 </h3>
 
 <p class="text-3xl font-bold text-green-600">
-0
+{{ $servicesTermines }}
 </p>
 
 </div>
@@ -207,7 +207,7 @@ Favoris
 </h3>
 
 <p class="text-3xl font-bold text-orange-500">
-0
+{{ $favoris }}
 </p>
 
 </div>
@@ -315,21 +315,169 @@ Prestataires proches de vous
 
 
 
-<div class="bg-white rounded-2xl shadow p-8 text-center">
+<div class="grid md:grid-cols-3 gap-6">
 
 
-<p class="text-gray-500">
 
-Aucun prestataire disponible pour le moment.
+@forelse($prestataires as $prestataire)
+
+
+
+<div class="bg-white rounded-2xl shadow p-6 hover:shadow-xl transition flex flex-col h-full">
+
+
+
+<div class="flex items-center gap-4 mb-4">
+
+
+<div class="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold">
+
+{{ strtoupper(substr($prestataire->user->name,0,1)) }}
+
+</div>
+
+
+
+<div>
+
+<h3 class="font-bold text-lg">
+
+@if($prestataire->nom_entreprise)
+
+{{ $prestataire->nom_entreprise }}
+
+@else
+
+{{ $prestataire->user->name }}
+
+@endif
+
+</h3>
+
+
+<p class="text-gray-500 text-sm">
+
+{{ $prestataire->category->name }}
 
 </p>
 
 
-<button class="mt-5 bg-blue-600 text-white px-6 py-3 rounded-xl">
+</div>
 
-Trouver un prestataire
 
-</button>
+</div>
+
+
+
+
+<div class="mt-3">
+
+<p class="text-gray-600 leading-relaxed h-16 overflow-hidden">
+
+{{ $prestataire->description }}
+
+</p>
+
+</div>
+
+
+@foreach($prestataire->prestations as $service)
+
+<a href="{{ route('services.show',$service->id) }}"
+class="block mt-5 bg-blue-600 text-white text-center py-3 rounded-xl">
+
+Voir {{ $service->titre }}
+
+</a>
+
+@endforeach
+
+
+<div class="mt-4 space-y-2">
+
+
+<p>
+
+📍 {{ $prestataire->ville }} - {{ $prestataire->quartier }}
+
+</p>
+
+
+
+<p>
+
+⭐ {{ $prestataire->experience }} ans d'expérience
+
+</p>
+
+
+
+<p>
+
+📞 {{ $prestataire->whatsapp }}
+
+</p>
+
+
+
+</div>
+
+
+
+
+
+<div class="flex gap-3 mt-5">
+
+
+
+<a href="https://wa.me/225{{ $prestataire->whatsapp }}"
+target="_blank"
+class="flex-1 text-center bg-green-500 text-white py-2 rounded-xl hover:bg-green-600">
+
+WhatsApp
+
+</a>
+
+
+
+<a href="tel:{{ $prestataire->whatsapp }}"
+class="flex-1 text-center bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700">
+
+Appeler
+
+</a>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+@empty
+
+
+<div class="bg-white rounded-2xl shadow p-8 text-center md:col-span-3">
+
+
+<p class="text-gray-500">
+
+Aucun prestataire disponible actuellement.
+
+</p>
+
+
+
+</div>
+
+
+@endforelse
+
+
 
 
 </div>
@@ -352,6 +500,65 @@ function toggleMenu(){
     let menu = document.getElementById('userMenu');
 
     menu.classList.toggle('hidden');
+
+}
+
+
+</script>
+
+<!-- MODAL IMAGE -->
+
+<div id="imageModal"
+class="hidden fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center">
+
+
+<div class="relative">
+
+
+<button 
+onclick="closeImage()"
+class="absolute top-2 right-2 bg-white text-black rounded-full w-10 h-10 text-xl">
+
+✕
+
+</button>
+
+
+
+<img id="modalImage"
+src=""
+class="max-w-4xl max-h-[90vh] rounded-xl shadow-lg">
+
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+
+function openImage(image){
+
+
+    document.getElementById('modalImage').src = image;
+
+    document.getElementById('imageModal')
+    .classList.remove('hidden');
+
+
+}
+
+
+
+function closeImage(){
+
+
+    document.getElementById('imageModal')
+    .classList.add('hidden');
+
 
 }
 

@@ -33,9 +33,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function prestataire()
+    public function prestataires()
 {
-    return $this->hasOne(Prestataire::class);
+    return $this->hasMany(Prestataire::class);
 }
 
 public function prestations()

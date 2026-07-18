@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\User;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Prestation;
 
 class Prestataire extends Model
 {
@@ -36,4 +37,11 @@ public function category()
 {
     return $this->belongsTo(Category::class);
 }
+
+ // Les services passent par le user
+ public function prestations()
+{
+    return $this->hasMany(Prestation::class, 'user_id', 'user_id');
+}
+
 }
