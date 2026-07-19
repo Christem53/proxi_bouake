@@ -11,10 +11,11 @@ class ServiceController extends Controller
     {
 
         $prestation->load([
-            'category',
-            'prestataire',
-            'prestataire.user'
-        ]);
+    'category',
+    'images',
+    'prestataire',
+    'prestataire.user'
+]);
 
 
         return view('services.show', compact('prestation'));

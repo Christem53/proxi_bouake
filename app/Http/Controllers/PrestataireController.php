@@ -63,10 +63,23 @@ class PrestataireController extends Controller
 
         ]);
 
+        
+
 
         return redirect()
             ->route('dashboard')
             ->with('success','Votre demande de prestataire a été envoyée.');
     }
+
+    public function show(Prestataire $prestataire)
+{
+    $prestataire->load([
+        'prestations',
+        'category',
+        'user'
+    ]);
+
+    return view('prestataires.show', compact('prestataire'));
+}
 
 }

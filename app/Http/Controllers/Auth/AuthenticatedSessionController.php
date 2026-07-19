@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -19,37 +20,68 @@ class AuthenticatedSessionController extends Controller
         return view('auth.login');
     }
 
+
     /**
      * Handle an incoming authentication request.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-    $request->authenticate();
 
-    $request->session()->regenerate();
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
 
-    if (auth()->user()->role === 'admin') {
-        return redirect()->route('admin.dashboard');
+
+        if (!Auth::attempt([
+            'email' => $request->email,
+            'password' => $request->password
+        ])) {
+
+            throw ValidationException::withMessages([
+                'email' => 'Email ou mot de passe incorrect.',
+            ]);
+
+        }
+
+
+        $request->session()->regenerate();
+
+
+
+        if (auth()->user()->role === 'admin') {
+
+            return redirect()->route('admin.dashboard');
+
+        }
+
+
+        return redirect()->route('dashboard');
+
     }
 
-    return redirect()->route('dashboard');
-    }
+
 
     /**
      * Destroy an authenticated session.
      */
-   public function destroy(Request $request): RedirectResponse
-{
-    Auth::guard('web')->logout();
+    public function destroy(Request $request): RedirectResponse
+    {
 
-    $request->session()->invalidate();
+        Auth::guard('web')->logout();
 
-    $request->session()->regenerateToken();
 
-    return redirect('/')->withHeaders([
-        'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',
-        'Pragma' => 'no-cache',
-        'Expires' => '0',
-    ]);
-}
+        $request->session()->invalidate();
+
+
+        $request->session()->regenerateToken();
+
+
+        return redirect('/')->withHeaders([
+            'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
+
+    }
 }

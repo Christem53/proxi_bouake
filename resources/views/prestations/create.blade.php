@@ -318,50 +318,124 @@ class="w-full rounded-xl border-gray-300 px-4 py-3">
 
 
 
-<!-- IMAGE -->
+<!-- IMAGES -->
+
+<div class="mb-8">
+
+    <label class="block text-lg font-semibold mb-4">
+        Photos de la prestation
+    </label>
+
+    <!-- Image principale -->
+    <div class="mb-6">
+
+        <label class="block font-medium mb-2 text-gray-700">
+            Image principale
+        </label>
+
+        <div class="border-2 border-dashed border-blue-300 rounded-2xl p-6 bg-blue-50 hover:bg-blue-100 transition">
+
+            <input
+                type="file"
+                id="image"
+                name="image"
+                accept="image/*"
+                class="hidden">
+
+            <label for="image" class="cursor-pointer flex flex-col items-center">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-12 h-12 text-blue-600 mb-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 15a4 4 0 014-4h1m4-4h1a4 4 0 014 4m-4 4v4m0 0l-3-3m3 3l3-3"/>
+
+                </svg>
+
+                <span class="text-blue-700 font-medium">
+                    Cliquez pour choisir une image
+                </span>
+
+                <span class="text-sm text-gray-500 mt-1">
+                    JPG, PNG, JPEG
+                </span>
+
+            </label>
+
+        </div>
+
+        <div class="mt-4">
+            <img id="previewPrincipale"
+                 class="hidden w-48 h-48 object-cover rounded-2xl shadow-lg border">
+        </div>
+
+    </div>
 
 
-<div class="mb-6">
-
-
-<label class="block font-semibold mb-2">
-
-Image de la prestation
-
-</label>
 
 
 
-<input
+    <!-- Images supplémentaires -->
 
-type="file"
+    <div>
 
-name="image"
+        <label class="block font-medium mb-2 text-gray-700">
+            Images supplémentaires
+        </label>
 
-accept="image/*"
+        <div class="border-2 border-dashed border-gray-300 rounded-2xl p-6 hover:bg-gray-50 transition">
 
-class="w-full rounded-xl border-gray-300 px-4 py-3">
+            <input
+                type="file"
+                id="images"
+                name="images[]"
+                multiple
+                accept="image/*"
+                class="hidden">
 
+            <label for="images"
+                class="cursor-pointer flex flex-col items-center">
 
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-12 h-12 text-gray-500 mb-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
 
-<p class="text-sm text-gray-500 mt-2">
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 16l4-4 4 4 8-8"/>
 
-Formats acceptés : JPG, PNG, JPEG (2 Mo maximum)
+                </svg>
 
-</p>
+                <span class="font-medium">
+                    Ajouter plusieurs images
+                </span>
 
+                <span class="text-sm text-gray-500">
+                    Vous pouvez sélectionner plusieurs photos
+                </span>
 
+            </label>
 
-@error('image')
+        </div>
 
-<p class="text-red-600 text-sm mt-2">
+        <div id="previewGalerie"
+             class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
+        </div>
 
-{{ $message }}
+    </div>
 
-</p>
-
-@enderror
-
+    <p class="text-sm text-gray-500 mt-4">
+        L'image principale sera utilisée comme photo de couverture.
+        Les autres seront visibles dans la galerie de votre prestation.
+    </p>
 
 </div>
 
@@ -522,11 +596,157 @@ Publier la prestation
 <script>
 
 
-function toggleMenu(){
+// ==========================
+// Galerie images supplémentaires
+// ==========================
 
-let menu=document.getElementById('userMenu');
+const inputImages = document.getElementById('images');
 
-menu.classList.toggle('hidden');
+const galerie = document.getElementById('previewGalerie');
+
+let selectedFiles = [];
+
+
+
+inputImages.addEventListener('change', function(e){
+
+
+    const nouveauxFichiers = Array.from(e.target.files);
+
+
+
+    if(selectedFiles.length + nouveauxFichiers.length > 5){
+
+        alert("Vous pouvez sélectionner au maximum 5 images supplémentaires.");
+
+        return;
+
+    }
+
+
+
+    selectedFiles = [
+        ...selectedFiles,
+        ...nouveauxFichiers
+    ];
+
+
+
+    mettreAJourInput();
+
+    afficherGalerie();
+
+
+});
+
+
+
+
+
+function afficherGalerie(){
+
+
+    galerie.innerHTML = "";
+
+
+
+    selectedFiles.forEach((file,index)=>{
+
+
+        const container = document.createElement("div");
+
+        container.className="relative group";
+
+
+
+        const img = document.createElement("img");
+
+
+        img.src = URL.createObjectURL(file);
+
+
+        img.className =
+        "w-full h-36 object-cover rounded-xl shadow border group-hover:scale-105 transition";
+
+
+
+
+
+        const bouton = document.createElement("button");
+
+
+        bouton.type="button";
+
+
+        bouton.innerHTML="✖";
+
+
+        bouton.className =
+        "absolute top-2 right-2 bg-red-600 text-white rounded-full w-7 h-7 hover:bg-red-700";
+
+
+
+
+
+        bouton.onclick=function(){
+
+
+            selectedFiles.splice(index,1);
+
+
+            mettreAJourInput();
+
+
+            afficherGalerie();
+
+
+        };
+
+
+
+
+
+        container.appendChild(img);
+
+
+        container.appendChild(bouton);
+
+
+        galerie.appendChild(container);
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+// Met à jour réellement le champ input file
+
+function mettreAJourInput(){
+
+
+    const dataTransfer = new DataTransfer();
+
+
+
+    selectedFiles.forEach(file=>{
+
+
+        dataTransfer.items.add(file);
+
+
+    });
+
+
+
+    inputImages.files = dataTransfer.files;
+
 
 }
 

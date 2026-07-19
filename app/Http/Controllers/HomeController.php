@@ -30,13 +30,14 @@ class HomeController extends Controller
 
 
     // Récupération des prestataires avec localisation GPS
-    $prestataires = \App\Models\Prestataire::whereNotNull('latitude')
-        ->whereNotNull('longitude')
-        ->with([
-            'user',
-            'category'
-        ])
-        ->get();
+    $prestataires = Prestataire::where('statut','accepte')
+    ->whereNotNull('latitude')
+    ->whereNotNull('longitude')
+    ->with([
+        'user',
+        'category'
+    ])
+    ->get();
 
 
 

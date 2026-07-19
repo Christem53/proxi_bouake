@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Prestation;
 use App\Models\Category;
+use App\Models\PrestationImage;
 use Illuminate\Http\Request;
 
 class PrestationsController extends Controller
@@ -47,89 +48,127 @@ class PrestationsController extends Controller
 
 
     public function store(Request $request)
-    {
+{
 
 
-        $request->validate([
+    $request->validate([
 
 
-            'category_id'=>'required',
+        'category_id'=>'required',
 
-            'titre'=>'required',
+        'titre'=>'required',
 
-            'description'=>'required',
+        'description'=>'required',
 
-            'prix'=>'nullable|numeric',
+        'prix'=>'nullable|numeric',
 
-            'image'=>'nullable|image|max:2048',
+        'image'=>'nullable|image|max:2048',
 
-
-        ]);
-
+        'images.*'=>'nullable|image|max:2048',
 
 
-
-
-        // Gestion de l'image
-
-        $image = null;
+    ]);
 
 
 
-        if($request->hasFile('image')){
 
 
-            $image = $request->file('image')
-                ->store('prestations','public');
+    // Gestion de l'image principale
+
+    $image = null;
+
+
+
+    if($request->hasFile('image')){
+
+
+        $image = $request->file('image')
+            ->store('prestations','public');
+
+
+    }
+
+
+
+
+
+
+    // Création de la prestation
+
+    $prestation = Prestation::create([
+
+
+        'user_id'=>auth()->id(),
+
+
+        'category_id'=>$request->category_id,
+
+
+        'titre'=>$request->titre,
+
+
+        'description'=>$request->description,
+
+
+        'statut'=>'en_attente',
+
+
+        'prix'=>$request->prix,
+
+
+        'image'=>$image,
+
+
+    ]);
+
+
+
+
+
+
+    // Enregistrement des images supplémentaires
+
+    if($request->hasFile('images')){
+
+
+        foreach($request->file('images') as $image){
+
+
+            $path = $image->store('prestations','public');
+
+
+
+            PrestationImage::create([
+
+
+                'prestation_id'=>$prestation->id,
+
+
+                'image'=>$path
+
+
+            ]);
 
 
         }
 
 
-
-
-
-
-        Prestation::create([
-
-
-            'user_id'=>auth()->id(),
-
-
-            'category_id'=>$request->category_id,
-
-
-            'titre'=>$request->titre,
-
-
-            'description'=>$request->description,
-
-
-            'statut'=>'en_attente',
-
-
-            'prix'=>$request->prix,
-
-
-            'image'=>$image,
-
-
-
-        ]);
-
-
-
-
-
-
-        return redirect()
-
-            ->route('prestations.index')
-
-            ->with('success','Prestation publiée avec succès');
-
-
     }
+
+
+
+
+
+
+
+    return redirect()
+
+        ->route('prestations.index')
+
+        ->with('success','Prestation publiée avec succès');
+
+
+}
 
         /**
      * Formulaire modification
@@ -156,6 +195,9 @@ class PrestationsController extends Controller
     /**
  * Mise à jour d'une prestation
  */
+/**
+ * Mise à jour d'une prestation
+ */
 public function update(Request $request, $id)
 {
 
@@ -177,7 +219,11 @@ public function update(Request $request, $id)
 
         'image'=>'nullable|image|max:2048',
 
+        'images.*'=>'nullable|image|max:2048',
+
     ]);
+
+
 
 
 
@@ -187,12 +233,13 @@ public function update(Request $request, $id)
 
 
 
-    // Si une nouvelle image est envoyée
+
+    // Si une nouvelle image principale est envoyée
 
     if($request->hasFile('image')){
 
 
-        // Supprimer l'ancienne image
+        // Supprimer l'ancienne image principale
 
         if($prestation->image){
 
@@ -203,7 +250,7 @@ public function update(Request $request, $id)
 
 
 
-        // Enregistrer la nouvelle
+        // Enregistrer la nouvelle image principale
 
         $image = $request->file('image')
             ->store('prestations','public');
@@ -214,6 +261,10 @@ public function update(Request $request, $id)
 
 
 
+
+
+
+    // Mise à jour des informations de la prestation
 
     $prestation->update([
 
@@ -230,6 +281,45 @@ public function update(Request $request, $id)
 
 
     ]);
+
+
+
+
+
+
+
+
+
+    // Ajouter les nouvelles images supplémentaires
+
+    if($request->hasFile('images')){
+
+
+        foreach($request->file('images') as $image){
+
+
+            $path = $image->store('prestations','public');
+
+
+
+            PrestationImage::create([
+
+
+                'prestation_id'=>$prestation->id,
+
+
+                'image'=>$path
+
+
+            ]);
+
+
+        }
+
+
+    }
+
+
 
 
 

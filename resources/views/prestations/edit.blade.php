@@ -160,60 +160,223 @@ enctype="multipart/form-data">
 
 
 
-<!-- IMAGE ACTUELLE -->
+<!-- IMAGES -->
+
+<div class="mb-6">
+
+<label class="block text-lg font-semibold mb-3">
+    Photos de la prestation
+</label>
+
+
+<!-- IMAGE PRINCIPALE -->
+
+<div class="mb-5">
+
+<label class="block font-medium mb-2 text-gray-700">
+    Image principale
+</label>
 
 
 @if($prestation->image)
 
-
-<div class="mb-6">
-
-
-<p class="font-semibold mb-3">
-Image actuelle
-</p>
-
+<div class="mb-3">
 
 <img src="{{ asset('storage/'.$prestation->image) }}"
-class="w-40 h-40 object-cover rounded-xl">
-
+class="w-32 h-32 object-cover rounded-xl shadow border">
 
 </div>
-
 
 @endif
 
 
 
+<div class="border-2 border-dashed border-blue-300 rounded-xl p-4 bg-blue-50 hover:bg-blue-100 transition">
+
+
+<input
+type="file"
+id="image"
+name="image"
+accept="image/*"
+class="hidden">
 
 
 
-
-<!-- NOUVELLE IMAGE -->
-
-
-<div class="mb-6">
+<label for="image"
+class="cursor-pointer flex flex-col items-center">
 
 
-<label class="block font-semibold mb-2">
+<svg xmlns="http://www.w3.org/2000/svg"
+class="w-8 h-8 text-blue-600 mb-2"
+fill="none"
+viewBox="0 0 24 24"
+stroke="currentColor">
 
-Changer l'image
+
+<path stroke-linecap="round"
+stroke-linejoin="round"
+stroke-width="2"
+d="M3 15a4 4 0 014-4h1m4-4h1a4 4 0 014 4m-4 4v4m0 0l-3-3m3 3l3-3"/>
+
+</svg>
+
+
+<span class="text-blue-700 text-sm font-medium">
+
+Changer l'image principale
+
+</span>
+
+
+<span class="text-xs text-gray-500">
+
+JPG, PNG, JPEG
+
+</span>
+
 
 </label>
 
 
-<input type="file"
-name="image"
-class="w-full border rounded-xl px-4 py-3">
+</div>
 
 
-@error('image')
 
-<p class="text-red-600 text-sm">
-{{ $message }}
+<img id="previewPrincipale"
+class="hidden mt-3 w-32 h-32 object-cover rounded-xl shadow border">
+
+
+</div>
+
+
+
+
+
+
+
+<!-- GALERIE EXISTANTE -->
+
+
+<div class="mb-5">
+
+
+<label class="block font-medium mb-2 text-gray-700">
+
+Galerie actuelle
+
+</label>
+
+
+
+<div class="grid grid-cols-3 md:grid-cols-5 gap-3">
+
+
+@foreach($prestation->images as $image)
+
+
+<img src="{{ asset('storage/'.$image->image) }}"
+class="w-full h-24 object-cover rounded-lg shadow border">
+
+
+@endforeach
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+<!-- AJOUT NOUVELLES IMAGES -->
+
+
+<div>
+
+
+<label class="block font-medium mb-2 text-gray-700">
+
+Ajouter des images
+
+</label>
+
+
+<div class="border-2 border-dashed border-gray-300 rounded-xl p-4 hover:bg-gray-50 transition">
+
+
+<input
+type="file"
+id="images"
+name="images[]"
+multiple
+accept="image/*"
+class="hidden">
+
+
+
+<label for="images"
+class="cursor-pointer flex flex-col items-center">
+
+
+<svg xmlns="http://www.w3.org/2000/svg"
+class="w-8 h-8 text-gray-500 mb-2"
+fill="none"
+viewBox="0 0 24 24"
+stroke="currentColor">
+
+
+<path stroke-linecap="round"
+stroke-linejoin="round"
+stroke-width="2"
+d="M4 16l4-4 4 4 8-8"/>
+
+</svg>
+
+
+<span class="text-sm font-medium">
+
+Ajouter plusieurs images
+
+</span>
+
+
+<span class="text-xs text-gray-500">
+
+Maximum 5 images
+
+</span>
+
+
+</label>
+
+
+</div>
+
+
+
+<div id="previewGalerie"
+class="grid grid-cols-3 md:grid-cols-5 gap-3 mt-3">
+
+</div>
+
+
+</div>
+
+
+
+<p class="text-xs text-gray-500 mt-3">
+
+L'image principale sera utilisée comme couverture.
+Les autres seront affichées dans la galerie.
+
 </p>
-
-@enderror
 
 
 </div>
@@ -399,11 +562,207 @@ Enregistrer les modifications
 
 function toggleMenu(){
 
-let menu=document.getElementById('userMenu');
+    let menu=document.getElementById('userMenu');
 
-menu.classList.toggle('hidden');
+    menu.classList.toggle('hidden');
 
 }
+
+
+
+// ===============================
+// Prévisualisation image principale
+// ===============================
+
+const inputImage = document.getElementById('image');
+
+const previewPrincipale = document.getElementById('previewPrincipale');
+
+
+inputImage.addEventListener('change', function(e){
+
+
+    const file = e.target.files[0];
+
+
+    if(!file) return;
+
+
+
+    previewPrincipale.src = URL.createObjectURL(file);
+
+
+    previewPrincipale.classList.remove('hidden');
+
+
+});
+
+
+
+
+
+// ===============================
+// Prévisualisation galerie
+// ===============================
+
+
+const inputImages = document.getElementById('images');
+
+const previewGalerie = document.getElementById('previewGalerie');
+
+
+let selectedFiles = [];
+
+
+
+inputImages.addEventListener('change', function(e){
+
+
+
+    const nouveauxFichiers = Array.from(e.target.files);
+
+
+
+    if(selectedFiles.length + nouveauxFichiers.length > 5){
+
+
+        alert("Vous pouvez ajouter maximum 5 images supplémentaires.");
+
+
+        return;
+
+    }
+
+
+
+    selectedFiles = [
+
+        ...selectedFiles,
+
+        ...nouveauxFichiers
+
+    ];
+
+
+
+    afficherGalerie();
+
+
+
+});
+
+
+
+
+
+
+function afficherGalerie(){
+
+
+    previewGalerie.innerHTML="";
+
+
+
+    selectedFiles.forEach((file,index)=>{
+
+
+
+        const div = document.createElement('div');
+
+        div.className="relative";
+
+
+
+        const img = document.createElement('img');
+
+
+        img.src = URL.createObjectURL(file);
+
+
+        img.className="w-full h-24 object-cover rounded-lg shadow border";
+
+
+
+
+
+        const bouton = document.createElement('button');
+
+
+        bouton.type="button";
+
+
+        bouton.innerHTML="✖";
+
+
+        bouton.className=
+        "absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 text-xs";
+
+
+
+
+
+        bouton.onclick=function(){
+
+
+            selectedFiles.splice(index,1);
+
+
+            afficherGalerie();
+
+
+            mettreAJourInput();
+
+
+        };
+
+
+
+
+
+        div.appendChild(img);
+
+
+        div.appendChild(bouton);
+
+
+        previewGalerie.appendChild(div);
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+// Garder les fichiers dans l'input
+
+function mettreAJourInput(){
+
+
+    const dataTransfer = new DataTransfer();
+
+
+
+    selectedFiles.forEach(file=>{
+
+
+        dataTransfer.items.add(file);
+
+
+    });
+
+
+
+    inputImages.files = dataTransfer.files;
+
+
+}
+
 
 </script>
 

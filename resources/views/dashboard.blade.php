@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Proxi Bouaké</title>
 
+    <link rel="stylesheet"
+    href="https://unpkg.com/leaflet/dist/leaflet.css">
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -133,29 +138,55 @@ Quel service recherchez-vous aujourd'hui ?
 
 <!-- RECHERCHE -->
 
-<div class="bg-white mt-6 p-4 rounded-2xl flex flex-col md:flex-row gap-4">
+<form method="GET" action="{{ route('dashboard') }}"
+class="bg-white mt-6 p-4 rounded-2xl flex flex-col md:flex-row gap-4">
 
 
-<input 
-type="text"
-placeholder="Ex: mécanicien, chauffeur, coiffeur..."
+<select 
+name="category"
 class="flex-1 px-5 py-3 rounded-xl border text-gray-800">
 
 
+<option value="">
+Toutes les catégories
+</option>
+
+
+@foreach(\App\Models\Category::all() as $category)
+
+<option value="{{ $category->id }}"
+{{ request('category') == $category->id ? 'selected' : '' }}>
+
+{{ $category->name }}
+
+</option>
+
+@endforeach
+
+
+</select>
+
+
+
 <input 
 type="text"
+name="quartier"
+value="{{ request('quartier') }}"
 placeholder="Votre quartier"
 class="flex-1 px-5 py-3 rounded-xl border text-gray-800">
 
 
-<button class="bg-blue-600 text-white px-8 py-3 rounded-xl">
+
+<button 
+type="submit"
+class="bg-blue-600 text-white px-8 py-3 rounded-xl">
 
 Rechercher
 
 </button>
 
 
-</div>
+</form>
 
 
 </div>
@@ -323,7 +354,9 @@ Prestataires proches de vous
 
 
 
-<div class="bg-white rounded-2xl shadow p-6 hover:shadow-xl transition flex flex-col h-full">
+<div 
+onclick="focusPrestataire({{ $prestataire->id }})"
+class="bg-white rounded-2xl shadow p-6 hover:shadow-xl transition flex flex-col h-full cursor-pointer">
 
 
 
@@ -380,6 +413,12 @@ Prestataires proches de vous
 
 </div>
 
+<a href="{{ route('prestataire.profil',$prestataire->id) }}"
+class="block mt-5 bg-gray-800 text-white text-center py-3 rounded-xl">
+
+Voir le profil
+
+</a>
 
 @foreach($prestataire->prestations as $service)
 
@@ -490,6 +529,40 @@ Aucun prestataire disponible actuellement.
 </div>
 
 
+<!-- CARTE GEOLOCALISATION DASHBOARD -->
+
+<section class="max-w-7xl mx-auto px-6 mt-12 mb-10">
+
+
+<h2 class="text-2xl font-bold mb-6 text-center">
+
+Prestataires autour de vous 📍
+
+</h2>
+
+
+
+<div class="bg-white rounded-2xl shadow p-6 max-w-10xl mx-auto">
+
+
+<p class="text-gray-500 mb-5">
+
+Visualisez les professionnels proches de votre position.
+
+</p>
+
+
+
+<div id="dashboardMap"
+class="w-full h-96 rounded-2xl overflow-hidden">
+</div>
+
+
+
+</div>
+
+
+</section>
 
 <x-footer />
 
@@ -503,6 +576,215 @@ function toggleMenu(){
 
 }
 
+document.addEventListener('DOMContentLoaded', function(){
+
+
+let map = L.map('dashboardMap')
+.setView(
+[7.6939,-5.0306],
+13
+);
+
+
+
+L.tileLayer(
+'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+{
+attribution:'&copy; OpenStreetMap contributors'
+}
+)
+.addTo(map);
+
+
+
+let prestataires = @json($prestataires);
+
+
+
+let positions = {};
+
+let markersPrestataires = {};
+
+
+
+prestataires.forEach(function(prestataire){
+
+
+
+if(prestataire.latitude && prestataire.longitude){
+
+
+
+let lat = parseFloat(prestataire.latitude);
+
+let lng = parseFloat(prestataire.longitude);
+
+
+
+let cle = lat.toFixed(3)+","+lng.toFixed(3);
+
+
+
+if(positions[cle]){
+
+
+let index = positions[cle];
+
+
+lat += index * 0.0002;
+
+lng += index * 0.0002;
+
+
+positions[cle]++;
+
+
+}else{
+
+
+positions[cle]=1;
+
+
+}
+
+
+
+
+let nom = prestataire.nom_entreprise
+? prestataire.nom_entreprise
+: prestataire.user.name;
+
+
+
+let marker = L.marker([
+    lat,
+    lng
+])
+.addTo(map);
+
+
+marker.bindPopup(`
+
+
+<div>
+
+
+<h3 class="font-bold">
+
+${nom}
+
+</h3>
+
+
+<p>
+
+👤 ${prestataire.user.name}
+
+</p>
+
+
+<p>
+
+🛠 ${prestataire.category.name}
+
+</p>
+
+
+<p>
+
+📍 ${prestataire.ville} - ${prestataire.quartier}
+
+</p>
+
+
+<p>
+
+📞 ${prestataire.whatsapp}
+
+</p>
+
+
+</div>
+
+
+`);
+
+markersPrestataires[prestataire.id] = marker;
+
+}
+
+
+
+});
+
+
+
+
+// POSITION CLIENT
+
+
+if(navigator.geolocation){
+
+
+
+navigator.geolocation.getCurrentPosition(
+
+function(position){
+
+
+
+let lat = position.coords.latitude;
+
+let lng = position.coords.longitude;
+
+
+
+
+L.marker([lat,lng],{
+
+
+icon:L.icon({
+
+iconUrl:
+'https://cdn-icons-png.flaticon.com/512/64/64113.png',
+
+iconSize:[35,35]
+
+})
+
+
+})
+
+.addTo(map)
+
+.bindPopup(
+
+"📍 Vous êtes ici"
+
+);
+
+
+
+map.flyTo(
+[lat,lng],
+14
+);
+
+
+
+}
+
+
+);
+
+
+
+}
+
+
+
+
+});
 
 </script>
 

@@ -19,12 +19,29 @@ class DashboardController extends Controller
 
         // Prestataires acceptés
 $prestataires = Prestataire::where('statut','accepte')
-    ->with([
-        'user',
-        'category',
-        'prestations'
-    ])
-    ->get();
+
+->whereNotNull('latitude')
+->whereNotNull('longitude')
+
+->when(request('category'), function($query){
+
+    $query->where('category_id', request('category'));
+
+})
+
+->when(request('quartier'), function($query){
+
+    $query->where('quartier','like','%'.request('quartier').'%');
+
+})
+
+->with([
+    'user',
+    'category',
+    'prestations'
+])
+
+->get();
 
 
 

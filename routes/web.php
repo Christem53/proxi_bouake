@@ -205,14 +205,24 @@ Route::middleware(['auth','nocache'])->group(function(){
 
 
     Route::get('/dashboard',
-[DashboardController::class,'index'])
-->middleware('verified')
-->name('dashboard');
+    [DashboardController::class,'index'])
+    ->middleware('verified')
+    ->name('dashboard');
 
 
 
 
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Profil public d'un prestataire
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/prestataires/{prestataire}',
+    [PrestataireController::class,'show'])
+    ->name('prestataire.profil');
 
 
 
@@ -243,7 +253,6 @@ Route::middleware(['auth','nocache'])->group(function(){
     Route::delete('/profile',
         [ProfileController::class,'destroy']
     )->name('profile.destroy');
-
 
 
 

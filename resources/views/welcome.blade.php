@@ -556,7 +556,39 @@ Créer mon profil
 <x-footer />
 
 
+
 <script>
+
+    let positionClient = null;
+
+function calculerDistance(lat1, lon1, lat2, lon2) {
+
+
+    const R = 6371; // rayon de la terre en km
+
+
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+
+
+    const a =
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) *
+        Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon/2) *
+        Math.sin(dLon/2);
+
+
+    const c = 2 * Math.atan2(
+        Math.sqrt(a),
+        Math.sqrt(1-a)
+    );
+
+
+    return R * c;
+
+}
 
 document.addEventListener('DOMContentLoaded', function(){
 
@@ -578,16 +610,66 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
 
-    // Récupération des prestataires depuis Laravel
-
     let prestataires = @json($prestataires);
+
+
+
+    // Stockage des positions déjà utilisées
+    let positionsUtilisees = {};
 
 
 
     prestataires.forEach(function(prestataire){
 
 
+
         if(prestataire.latitude && prestataire.longitude){
+
+
+            let lat = parseFloat(prestataire.latitude);
+
+            let lng = parseFloat(prestataire.longitude);
+
+
+
+            // Arrondir pour détecter les prestataires proches
+let cle = lat.toFixed(3) + "," + lng.toFixed(3);
+
+
+// Si plusieurs prestataires sont dans la même zone
+if(positionsUtilisees[cle]){
+
+
+    let index = positionsUtilisees[cle];
+
+
+    let angle = index * (Math.PI / 4);
+
+
+    let rayon = 0.00025;
+
+
+
+    lat += Math.cos(angle) * rayon;
+
+    lng += Math.sin(angle) * rayon;
+
+
+
+    positionsUtilisees[cle]++;
+
+
+}
+else{
+
+
+    positionsUtilisees[cle] = 1;
+
+
+}
+
+
+
 
 
             let nom = prestataire.nom_entreprise 
@@ -596,9 +678,10 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
 
+
             L.marker([
-                parseFloat(prestataire.latitude),
-                parseFloat(prestataire.longitude)
+                lat,
+                lng
             ])
             .addTo(map)
             .bindPopup(`
@@ -632,13 +715,65 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
                     <p>
-                        📞 ${prestataire.whatsapp}
-                    </p>
+📞 ${prestataire.whatsapp ?? ''}
+</p>
+
+
+<p>
+📏 Distance :
+
+${
+positionClient
+
+?
+
+(
+calculerDistance(
+positionClient.latitude,
+positionClient.longitude,
+parseFloat(prestataire.latitude),
+parseFloat(prestataire.longitude)
+) < 1
+
+?
+
+Math.round(
+calculerDistance(
+positionClient.latitude,
+positionClient.longitude,
+parseFloat(prestataire.latitude),
+parseFloat(prestataire.longitude)
+) * 1000
+)
++ " mètres"
+
+:
+
+calculerDistance(
+positionClient.latitude,
+positionClient.longitude,
+parseFloat(prestataire.latitude),
+parseFloat(prestataire.longitude)
+)
+.toFixed(1)
++ " km"
+
+)
+
+:
+
+"Activez votre localisation"
+
+}
+
+</p>
+
 
 
                 </div>
 
             `);
+
 
 
         }
@@ -648,7 +783,94 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
 
+
+
+
+    // POSITION DU CLIENT
+
+
+    if(navigator.geolocation){
+
+
+        navigator.geolocation.getCurrentPosition(
+
+            function(position){
+
+
+
+                let latitude = position.coords.latitude;
+
+                let longitude = position.coords.longitude;
+
+                positionClient = {
+                latitude: latitude,
+                longitude: longitude
+                };
+
+
+                let clientMarker = L.marker([
+
+                    latitude,
+
+                    longitude
+
+                ],{
+
+
+                    icon:L.icon({
+
+                        iconUrl:
+                        'https://cdn-icons-png.flaticon.com/512/64/64113.png',
+
+                        iconSize:[35,35]
+
+                    })
+
+
+                })
+
+                .addTo(map)
+
+                .bindPopup(`
+
+                    <b>📍 Vous êtes ici</b>
+
+                `);
+
+
+
+                map.flyTo([
+                latitude,
+                 longitude
+                ],14,{
+                animate:true,
+                  duration:1.5
+                });
+
+
+
+            },
+
+
+            function(){
+
+
+                console.log(
+                    "Position client non disponible"
+                );
+
+
+            }
+
+        );
+
+
+    }
+
+
+
 });
+
 
 </script>
 

@@ -185,6 +185,56 @@ Aucune image disponible
 
 
 
+<!-- GALERIE IMAGES SUPPLEMENTAIRES -->
+
+@if($prestation->images->count())
+
+
+<div class="p-6 bg-gray-50">
+
+
+<h2 class="text-xl font-bold mb-4">
+
+Galerie photos
+
+</h2>
+
+
+
+
+<div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+
+
+
+@foreach($prestation->images as $image)
+
+
+
+<img 
+src="{{ asset('storage/'.$image->image) }}"
+onclick="openImage(this.src)"
+class="h-32 w-full object-cover rounded-xl shadow cursor-pointer hover:scale-105 transition">
+
+
+
+@endforeach
+
+
+
+</div>
+
+
+
+</div>
+
+
+@endif
+
+
+
+
+
+
 
 <div class="p-8">
 
@@ -203,6 +253,7 @@ Aucune image disponible
 {{ $prestation->titre }}
 
 </h1>
+
 
 
 
@@ -328,7 +379,7 @@ Informations du prestataire
 
 
 
-<a href="https://wa.me/225{{ $prestation->user?->whatsapp ?? '' }}"
+<a href="https://wa.me/225{{ $prestation->prestataire?->whatsapp ?? '' }}"
 target="_blank"
 
 class="block mt-8 bg-green-500 hover:bg-green-600 text-white text-center py-4 rounded-xl font-bold">
