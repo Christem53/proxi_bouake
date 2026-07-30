@@ -7,8 +7,15 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\PrestationsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\PrestataireController as AdminPrestataireController;
+use App\Http\Controllers\AvisController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\DemandeController;
+use App\Http\Controllers\NotificationController;
+use App\Models\User;
+use App\Models\Category;
+use App\Models\Prestataire;
+use App\Models\Demande;
 
 
 use Illuminate\Support\Facades\Route;
@@ -64,9 +71,37 @@ Route::prefix('admin')
 
         Route::get('/dashboard', function(){
 
-            return view('admin.dashboard');
+    $utilisateurs = User::count();
 
-        })->name('admin.dashboard');
+    $categories = Category::count();
+
+    $prestataires = Prestataire::where('statut', 'accepte')
+        ->count();
+
+    $demandes = Demande::count();
+
+
+    $performance = [
+        'utilisateurs' => $utilisateurs,
+        'prestataires' => $prestataires,
+        'demandes' => $demandes,
+        'categories' => $categories,
+    ];
+
+
+    return view('admin.dashboard', compact(
+        'utilisateurs',
+        'categories',
+        'prestataires',
+        'demandes',
+        'performance'
+    ));
+
+})->name('admin.dashboard');
+
+
+
+
 
 
 
@@ -193,6 +228,9 @@ Route::prefix('admin')
 Route::middleware(['auth','nocache'])->group(function(){
 
 
+    Route::get('/notifications',
+        [NotificationController::class, 'index']
+    )->name('notifications.index');
 
 
 
@@ -297,10 +335,118 @@ Route::middleware(['auth','nocache'])->group(function(){
 });
 
 
+/*
+|--------------------------------------------------------------------------
+| Demandes de service
+|--------------------------------------------------------------------------
+*/
 
 
-Route::get('/services/{prestation}', [ServiceController::class,'show'])
-->name('services.show');
+// Formulaire pour envoyer une demande à un prestataire
+Route::get('/demandes/create/{id}',
+    [DemandeController::class, 'create']
+)->name('demandes.create');
+
+
+
+// Enregistrement d'une demande envoyée par un client
+Route::post('/demandes',
+    [DemandeController::class, 'store']
+)->name('demandes.store');
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Demandes envoyées par le client
+|--------------------------------------------------------------------------
+| Exemple :
+| Un client clique sur "Demander"
+| Il retrouve ici toutes les demandes qu'il a envoyées
+|--------------------------------------------------------------------------
+*/
+
+
+Route::middleware('auth')->group(function () {
+
+
+    Route::get('/mes-demandes',
+        [DemandeController::class,'mesDemandes']
+    )->name('demandes.client');
+
+    //Formulaire pour laisser un avis
+    Route::get('/avis/{demande}', [AvisController::class, 'create'])
+    ->name('avis.create');
+
+    //Enregistrer l'avis
+    Route::post('/avis', [AvisController::class, 'store'])
+    ->name('avis.store');
+
+});
+
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Demandes reçues par le prestataire
+|--------------------------------------------------------------------------
+| Exemple :
+| Un prestataire voit les clients qui ont demandé ses services
+|--------------------------------------------------------------------------
+*/
+
+
+Route::middleware('auth')->group(function () {
+
+
+    Route::get('/demandes-recues',
+        [DemandeController::class,'index']
+    )->name('demandes.index');
+
+
+});
+
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Actions prestataire sur une demande
+|--------------------------------------------------------------------------
+*/
+
+
+Route::post('/demandes/{id}/accepter',
+    [DemandeController::class,'accepter']
+)->name('demandes.accepter');
+
+
+
+Route::post('/demandes/{id}/refuser',
+    [DemandeController::class,'refuser']
+)->name('demandes.refuser');
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Affichage d'une prestation
+|--------------------------------------------------------------------------
+*/
+
+
+Route::get('/services/{prestation}',
+    [ServiceController::class,'show']
+)->name('services.show');
 
 
 

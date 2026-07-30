@@ -39,8 +39,46 @@ Accueil
 </a>
 
 
-<a href="#" class="text-gray-600 hover:text-blue-600">
+<a href="{{ route('demandes.client') }}"
+class="text-gray-600 hover:text-blue-600">
+
 Mes demandes
+
+</a>
+
+
+<!-- NOTIFICATIONS -->
+
+<a href="{{ route('notifications.index') }}"
+class="relative text-gray-600 hover:text-blue-600 text-2xl">
+
+    🔔
+
+
+    @php
+        $notificationCount = 0;
+
+        if(Auth::user()->prestataire){
+            $notificationCount = Auth::user()
+                ->prestataire
+                ->notifications()
+                ->where('lu', false)
+                ->count();
+        }
+    @endphp
+
+
+    @if($notificationCount > 0)
+
+        <span class="absolute -top-2 -right-3 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-1">
+
+            {{ $notificationCount }}
+
+        </span>
+
+    @endif
+
+
 </a>
 
 
@@ -219,11 +257,11 @@ Demandes envoyées
 <div class="bg-white p-6 rounded-2xl shadow">
 
 <h3 class="text-gray-500">
-Services terminés
+    Demandes acceptées
 </h3>
 
 <p class="text-3xl font-bold text-green-600">
-{{ $servicesTermines }}
+    {{ $demandesAcceptees }}
 </p>
 
 </div>
@@ -234,11 +272,11 @@ Services terminés
 <div class="bg-white p-6 rounded-2xl shadow">
 
 <h3 class="text-gray-500">
-Favoris
+    Demandes refusées
 </h3>
 
-<p class="text-3xl font-bold text-orange-500">
-{{ $favoris }}
+<p class="text-3xl font-bold text-red-600">
+    {{ $demandesRefusees }}
 </p>
 
 </div>
@@ -387,6 +425,31 @@ class="bg-white rounded-2xl shadow p-6 hover:shadow-xl transition flex flex-col 
 
 </h3>
 
+<div class="flex items-center gap-2 mt-2">
+
+    @if($prestataire->avis->count())
+
+        <span class="text-yellow-500 font-semibold">
+            ⭐ {{ number_format($prestataire->avis->avg('note'),1) }}
+        </span>
+
+        <span class="text-gray-500 text-sm">
+            ({{ $prestataire->avis->count() }} avis)
+        </span>
+
+    @else
+
+        <span class="text-gray-400 text-sm">
+            ⭐ Aucun avis
+        </span>
+
+    @endif
+
+</div>
+
+<p class="text-sm text-gray-600 mt-1">
+    📦 {{ $prestataire->demandes->where('statut','acceptee')->count() }} demande(s) réalisée(s)
+</p>
 
 <p class="text-gray-500 text-sm">
 
@@ -414,20 +477,31 @@ class="bg-white rounded-2xl shadow p-6 hover:shadow-xl transition flex flex-col 
 </div>
 
 <a href="{{ route('prestataire.profil',$prestataire->id) }}"
-class="block mt-5 bg-gray-800 text-white text-center py-3 rounded-xl">
+class="inline-flex items-center justify-center mt-4 px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white text-sm rounded-lg">
 
-Voir le profil
+👤 Voir le profil
 
 </a>
 
 @foreach($prestataire->prestations as $service)
 
-<a href="{{ route('services.show',$service->id) }}"
-class="block mt-5 bg-blue-600 text-white text-center py-3 rounded-xl">
+<div class="flex flex-wrap gap-2 mt-3">
 
-Voir {{ $service->titre }}
+    <a href="{{ route('services.show',$service->id) }}"
+    class="px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white text-sm rounded-lg transition">
 
-</a>
+        📄 Voir le service
+
+    </a>
+
+    <a href="{{ route('demandes.create',$service->id) }}"
+    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition">
+
+        ✉️ Demander
+
+    </a>
+
+</div>
 
 @endforeach
 

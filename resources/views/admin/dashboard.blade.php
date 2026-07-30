@@ -18,7 +18,7 @@ Utilisateurs
 </h3>
 
 <p class="text-4xl font-bold text-blue-600">
-0
+    {{ $utilisateurs }}
 </p>
 
 </div>
@@ -33,7 +33,7 @@ Catégories
 </h3>
 
 <p class="text-4xl font-bold text-green-600">
-0
+    {{ $categories }}
 </p>
 
 </div>
@@ -48,7 +48,7 @@ Prestataires
 </h3>
 
 <p class="text-4xl font-bold text-orange-600">
-0
+    {{ $prestataires }}
 </p>
 
 </div>
@@ -63,7 +63,7 @@ Demandes
 </h3>
 
 <p class="text-4xl font-bold text-red-600">
-0
+    {{ $demandes }}
 </p>
 
 </div>
@@ -84,21 +84,13 @@ Demandes
         </h2>
 
 
-        <select class="border rounded-lg px-3 py-2 text-sm">
+        <div class="flex justify-between items-center mb-6">
 
-            <option>
-                Cette semaine
-            </option>
+    <h2 class="text-xl font-bold">
+        Performance de la plateforme
+    </h2>
 
-            <option>
-                Ce mois
-            </option>
-
-            <option>
-                Cette année
-            </option>
-
-        </select>
+</div>
 
     </div>
 
@@ -108,6 +100,67 @@ Demandes
 
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+const ctx = document.getElementById('performanceChart');
+
+
+new Chart(ctx, {
+
+    type: 'bar',
+
+    data: {
+
+        labels: [
+            'Utilisateurs',
+            'Catégories',
+            'Prestataires',
+            'Demandes'
+        ],
+
+
+        datasets: [{
+
+            label: 'Activité plateforme',
+
+            data: [
+
+                {{ $performance['utilisateurs'] }},
+                {{ $performance['categories'] }},
+                {{ $performance['prestataires'] }},
+                {{ $performance['demandes'] }}
+
+            ],
+
+        }]
+
+    },
+
+
+    options: {
+
+        responsive:true,
+
+        scales: {
+
+            y: {
+
+                beginAtZero:true
+
+            }
+
+        }
+
+    }
+
+});
+
+
+</script>
 
 
 

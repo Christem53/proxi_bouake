@@ -40,10 +40,10 @@ Accueil
 </a>
 
 
-<a href="#"
+<a href="{{ route('demandes.index') }}"
 class="text-gray-600 hover:text-blue-600">
 
-Mes demandes
+Demandes reçues
 
 </a>
 

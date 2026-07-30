@@ -18,54 +18,58 @@ class DashboardController extends Controller
 
 
         // Prestataires acceptés
-$prestataires = Prestataire::where('statut','accepte')
+        $prestataires = Prestataire::where('statut','accepte')
 
-->whereNotNull('latitude')
-->whereNotNull('longitude')
+        ->whereNotNull('latitude')
+        ->whereNotNull('longitude')
 
-->when(request('category'), function($query){
+        ->when(request('category'), function($query){
 
-    $query->where('category_id', request('category'));
+            $query->where('category_id', request('category'));
 
-})
+        })
 
-->when(request('quartier'), function($query){
+        ->when(request('quartier'), function($query){
 
-    $query->where('quartier','like','%'.request('quartier').'%');
+            $query->where('quartier','like','%'.request('quartier').'%');
 
-})
+        })
 
-->with([
-    'user',
-    'category',
-    'prestations'
-])
+        ->with([
+            'user',
+            'category',
+            'prestations',
+            'avis',
+            'demandes'
+        ])
 
-->get();
-
-
-
-        // Nombre de demandes envoyées par le client
-        $demandesEnvoyees = 0;
+        ->get();
 
 
 
-        // Nombre de services terminés
-        $servicesTermines = 0;
+        // Nombre de demandes envoyées par le client connecté
+        $demandesEnvoyees = Auth::user()
+    ->demandesEnvoyees()
+    ->count();
 
+$demandesAcceptees = Auth::user()
+    ->demandesEnvoyees()
+    ->where('statut', 'acceptee')
+    ->count();
 
-
-        // Nombre favoris
-        $favoris = 0;
+$demandesRefusees = Auth::user()
+    ->demandesEnvoyees()
+    ->where('statut', 'refusee')
+    ->count();
 
 
 
         return view('dashboard', compact(
-            'prestataires',
-            'demandesEnvoyees',
-            'servicesTermines',
-            'favoris'
-        ));
+    'prestataires',
+    'demandesEnvoyees',
+    'demandesAcceptees',
+    'demandesRefusees'
+));
 
     }
 

@@ -44,4 +44,19 @@ public function category()
     return $this->hasMany(Prestation::class, 'user_id', 'user_id');
 }
 
+public function demandes()
+{
+    return $this->hasMany(Demande::class);
+}
+
+public function notifications()
+{
+    return $this->hasMany(Notification::class);
+}
+
+public function avis()
+{
+    return $this->hasMany(Avis::class);
+}
+
 }

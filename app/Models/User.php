@@ -11,6 +11,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Prestataire;
 use App\Models\Prestation;
+use App\Notifications\ResetPasswordNotification;
+
 
 #[Fillable(['name', 'email', 'phone', 'ville', 
 'quartier', 'photo', 'role','password'])]
@@ -33,13 +35,29 @@ class User extends Authenticatable
         ];
     }
 
-    public function prestataires()
+  public function prestataire()
 {
-    return $this->hasMany(Prestataire::class);
+    return $this->hasOne(Prestataire::class, 'user_id', 'id');
 }
 
 public function prestations()
 {
     return $this->hasMany(Prestation::class);
+}
+
+public function demandesEnvoyees()
+{
+    return $this->hasMany(Demande::class, 'client_id');
+}
+
+public function avis()
+{
+    return $this->hasMany(Avis::class, 'client_id');
+}
+
+
+public function sendPasswordResetNotification($token)
+{
+    $this->notify(new ResetPasswordNotification($token));
 }
 }

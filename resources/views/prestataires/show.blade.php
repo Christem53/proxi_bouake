@@ -167,7 +167,85 @@ Description
 
 
 
+<!-- AVIS CLIENTS -->
 
+<div class="mt-8">
+
+    <h2 class="text-2xl font-bold mb-5">
+        ⭐ Avis des clients
+    </h2>
+
+    @php
+        $avis = $prestataire->avis;
+    @endphp
+
+    @if($avis->count())
+
+        <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-5 mb-6">
+
+            <div class="flex items-center justify-between">
+
+                <div>
+
+                    <p class="text-3xl font-bold text-yellow-600">
+                        ⭐ {{ number_format($avis->avg('note'),1) }}/5
+                    </p>
+
+                    <p class="text-gray-600">
+                        Basé sur {{ $avis->count() }} avis
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        @foreach($avis as $commentaire)
+
+            <div class="border rounded-2xl p-5 mb-4">
+
+                <div class="flex justify-between items-center">
+
+                    <strong>
+                        {{ $commentaire->client->name }}
+                    </strong>
+
+                    <span class="text-yellow-500 text-lg">
+                        {{ str_repeat('⭐', $commentaire->note) }}
+                    </span>
+
+                </div>
+
+                @if($commentaire->commentaire)
+
+                    <p class="mt-3 text-gray-700">
+                        {{ $commentaire->commentaire }}
+                    </p>
+
+                @endif
+
+                <p class="text-sm text-gray-500 mt-3">
+                    {{ $commentaire->created_at->diffForHumans() }}
+                </p>
+
+            </div>
+
+        @endforeach
+
+    @else
+
+        <div class="bg-gray-50 border rounded-2xl p-6 text-center">
+
+            <p class="text-gray-500">
+                Aucun avis pour le moment.
+            </p>
+
+        </div>
+
+    @endif
+
+</div>
 
 
 <!-- CONTACT -->

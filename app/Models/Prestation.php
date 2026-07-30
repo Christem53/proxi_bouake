@@ -48,4 +48,9 @@ class Prestation extends Model
     return $this->hasMany(PrestationImage::class);
 }
 
+public function demandes()
+{
+    return $this->hasMany(Demande::class);
+}
+
 }
