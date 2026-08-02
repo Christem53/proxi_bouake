@@ -1,3 +1,4 @@
+.vite/
 *.log
 .DS_Store
 .env
