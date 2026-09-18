@@ -54,14 +54,22 @@ Demandes reçues
 <div class="relative">
 
 
-<button 
+<button
 onclick="toggleMenu()"
 class="flex items-center gap-3">
 
 
-<div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-blue-600 text-white flex items-center justify-center font-bold">
 
-{{ strtoupper(substr(Auth::user()->name,0,1)) }}
+    @if(Auth::user()->photo)
+        <img
+            src="{{ asset('storage/' . Auth::user()->photo) }}"
+            alt="Photo de profil"
+            class="w-full h-full object-cover"
+        >
+    @else
+        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+    @endif
 
 </div>
 
@@ -152,11 +160,21 @@ class="w-full text-left px-5 py-3 text-red-600 hover:bg-gray-100">
 <div class="flex items-center gap-6">
 
 
-<div class="w-24 h-24 bg-white text-blue-600 rounded-full flex items-center justify-center text-4xl font-bold">
+<div class="w-24 h-24 bg-white text-blue-600 rounded-full overflow-hidden flex items-center justify-center text-4xl font-bold">
 
+    @if(Auth::user()->photo)
 
-{{ strtoupper(substr(Auth::user()->name,0,1)) }}
+        <img
+            src="{{ asset('storage/' . Auth::user()->photo) }}"
+            alt="Photo de profil de {{ Auth::user()->name }}"
+            class="w-full h-full object-cover"
+        >
 
+    @else
+
+        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+
+    @endif
 
 </div>
 
@@ -208,12 +226,6 @@ Client ProxiBouaké
 
 <div class="bg-white rounded-3xl shadow p-8 mt-8">
 
-
-<h2 class="text-2xl font-bold mb-6">
-
-Informations personnelles
-
-</h2>
 
 
 @include('profile.partials.update-profile-information-form')

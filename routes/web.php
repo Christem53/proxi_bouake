@@ -46,7 +46,10 @@ Route::resource('categories', CategoryController::class);
 
 
 
-
+Route::get('/clear-cache', function () {
+    Artisan::call('optimize:clear');
+    return "Cache nettoyé";
+});
 
 
 /*

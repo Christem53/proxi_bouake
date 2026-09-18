@@ -85,13 +85,27 @@ class="relative text-gray-600 hover:text-blue-600 text-2xl">
 
 <div class="relative">
 
-    <button 
+    <button
         onclick="toggleMenu()"
         class="flex items-center gap-3">
 
-        <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
-            {{ strtoupper(substr(Auth::user()->name,0,1)) }}
-        </div>
+        <div class="w-10 h-10 rounded-full overflow-hidden bg-blue-600 text-white flex items-center justify-center font-bold">
+
+    @if(Auth::user()->photo)
+
+        <img
+            src="{{ asset('storage/' . Auth::user()->photo) }}"
+            alt="Photo de profil de {{ Auth::user()->name }}"
+            class="w-full h-full object-cover"
+        >
+
+    @else
+
+        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+
+    @endif
+
+</div>
 
         <div class="text-left">
 
@@ -180,7 +194,7 @@ Quel service recherchez-vous aujourd'hui ?
 class="bg-white mt-6 p-4 rounded-2xl flex flex-col md:flex-row gap-4">
 
 
-<select 
+<select
 name="category"
 class="flex-1 px-5 py-3 rounded-xl border text-gray-800">
 
@@ -206,7 +220,7 @@ Toutes les catégories
 
 
 
-<input 
+<input
 type="text"
 name="quartier"
 value="{{ request('quartier') }}"
@@ -215,7 +229,7 @@ class="flex-1 px-5 py-3 rounded-xl border text-gray-800">
 
 
 
-<button 
+<button
 type="submit"
 class="bg-blue-600 text-white px-8 py-3 rounded-xl">
 
@@ -392,7 +406,7 @@ Prestataires proches de vous
 
 
 
-<div 
+<div
 onclick="focusPrestataire({{ $prestataire->id }})"
 class="bg-white rounded-2xl shadow p-6 hover:shadow-xl transition flex flex-col h-full cursor-pointer">
 
@@ -401,9 +415,21 @@ class="bg-white rounded-2xl shadow p-6 hover:shadow-xl transition flex flex-col 
 <div class="flex items-center gap-4 mb-4">
 
 
-<div class="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold">
+<div class="w-14 h-14 rounded-full overflow-hidden bg-blue-600 text-white flex items-center justify-center text-xl font-bold">
 
-{{ strtoupper(substr($prestataire->user->name,0,1)) }}
+    @if($prestataire->user->photo)
+
+        <img
+            src="{{ asset('storage/' . $prestataire->user->photo) }}"
+            alt="Photo de {{ $prestataire->user->name }}"
+            class="w-full h-full object-cover"
+        >
+
+    @else
+
+        {{ strtoupper(substr($prestataire->user->name, 0, 1)) }}
+
+    @endif
 
 </div>
 
@@ -871,7 +897,7 @@ class="hidden fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justif
 <div class="relative">
 
 
-<button 
+<button
 onclick="closeImage()"
 class="absolute top-2 right-2 bg-white text-black rounded-full w-10 h-10 text-xl">
 

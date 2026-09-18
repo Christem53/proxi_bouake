@@ -33,7 +33,14 @@ class ProfileController extends Controller
     // Ajouter les nouvelles colonnes
     $user->phone = $request->phone;
     $user->quartier = $request->quartier;
-    $user->photo = $request->photo;
+   if ($request->hasFile('photo')) {
+
+    // Enregistrer la nouvelle photo dans storage/app/public/profiles
+    $photo = $request->file('photo')->store('profiles', 'public');
+
+    // Enregistrer uniquement le chemin dans la base de données
+    $user->photo = $photo;
+}
 
 
     if ($user->isDirty('email')) {
