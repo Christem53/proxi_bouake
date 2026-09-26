@@ -25,6 +25,8 @@ class Prestataire extends Model
     'statut',
     'latitude',
     'longitude',
+    'piece_identite_recto',
+    'piece_identite_verso',
 ];
 
 public function user()

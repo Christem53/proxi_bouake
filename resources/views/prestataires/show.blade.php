@@ -62,7 +62,7 @@ Retour accueil
 @if($prestataire->photo)
 
 
-<img 
+<img
 src="{{ asset('storage/'.$prestataire->photo) }}"
 class="w-full h-72 object-cover">
 
@@ -109,7 +109,7 @@ class="w-full h-72 object-cover">
 
 <p class="mt-3">
 
-💻 
+💻
 {{ $prestataire->category?->name ?? 'Catégorie non définie' }}
 
 </p>
@@ -118,7 +118,7 @@ class="w-full h-72 object-cover">
 
 <p class="mt-3">
 
-📍 
+📍
 {{ $prestataire->ville }} - {{ $prestataire->quartier }}
 
 </p>
@@ -298,7 +298,7 @@ Ses prestations
 @if($service->image)
 
 
-<img 
+<img
 src="{{ asset('storage/'.$service->image) }}"
 class="h-40 w-full object-cover rounded-xl mb-4">
 

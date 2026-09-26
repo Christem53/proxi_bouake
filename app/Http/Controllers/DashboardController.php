@@ -47,6 +47,7 @@ class DashboardController extends Controller
 
 
 
+
         // Nombre de demandes envoyées par le client connecté
         $demandesEnvoyees = Auth::user()
     ->demandesEnvoyees()

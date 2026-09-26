@@ -173,7 +173,149 @@ Description
 </div>
 
 
+<!-- Pièce d'identité -->
 
+<hr class="my-8">
+
+<div>
+
+    <div class="flex items-center gap-3 mb-2">
+
+        <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-xl">
+            🪪
+        </div>
+
+        <div>
+
+            <h3 class="text-lg font-bold">
+                Pièce d'identité
+            </h3>
+
+            <p class="text-sm text-gray-500">
+                Documents fournis pour la vérification de l'identité du candidat.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="grid md:grid-cols-2 gap-6 mt-6">
+
+
+        <!-- RECTO -->
+
+        <div class="border border-gray-200 rounded-2xl p-5 bg-gray-50">
+
+            <div class="flex items-center justify-between mb-4">
+
+                <div>
+
+                    <p class="font-semibold text-gray-900">
+                        Recto
+                    </p>
+
+                    <p class="text-sm text-gray-500">
+                        Face avant de la pièce
+                    </p>
+
+                </div>
+
+                <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+                    Document
+                </span>
+
+            </div>
+
+
+            @if($prestataire->piece_identite_recto)
+
+                <a
+                    href="{{ route('admin.prestataires.piece', [$prestataire->id, 'recto']) }}"
+                    target="_blank"
+                    class="inline-flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+                >
+
+                    👁️ Voir le recto
+
+                </a>
+
+            @else
+
+                <div class="text-sm text-red-600 bg-red-50 rounded-xl p-3">
+                    ⚠️ Aucun recto fourni.
+                </div>
+
+            @endif
+
+        </div>
+
+
+
+        <!-- VERSO -->
+
+        <div class="border border-gray-200 rounded-2xl p-5 bg-gray-50">
+
+            <div class="flex items-center justify-between mb-4">
+
+                <div>
+
+                    <p class="font-semibold text-gray-900">
+                        Verso
+                    </p>
+
+                    <p class="text-sm text-gray-500">
+                        Face arrière de la pièce
+                    </p>
+
+                </div>
+
+                <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+                    Document
+                </span>
+
+            </div>
+
+
+            @if($prestataire->piece_identite_verso)
+
+                <a
+                    href="{{ route('admin.prestataires.piece', [$prestataire->id, 'verso']) }}"
+                    target="_blank"
+                    class="inline-flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+                >
+
+                    👁️ Voir le verso
+
+                </a>
+
+            @else
+
+                <div class="text-sm text-red-600 bg-red-50 rounded-xl p-3">
+                    ⚠️ Aucun verso fourni.
+                </div>
+
+            @endif
+
+        </div>
+
+    </div>
+
+
+    <div class="mt-4 flex items-start gap-3 rounded-xl bg-yellow-50 border border-yellow-200 p-4">
+
+        <span class="text-lg">
+            🔒
+        </span>
+
+        <p class="text-sm text-yellow-800">
+            Ces documents sont confidentiels et doivent être consultés
+            uniquement dans le cadre de la vérification du candidat.
+        </p>
+
+    </div>
+
+</div>
 
 
 <div class="mt-10 flex gap-4">

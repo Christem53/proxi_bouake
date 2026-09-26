@@ -55,7 +55,7 @@ Mes demandes
 <div class="relative">
 
 
-<button 
+<button
 onclick="toggleMenu()"
 class="flex items-center gap-3">
 
@@ -186,7 +186,7 @@ Présentez votre activité et proposez vos services aux habitants de Bouaké.
 
 
 
-<form action="{{ route('prestataire.store') }}" method="POST">
+<form action="{{ route('prestataire.store') }}" method="POST" enctype="multipart/form-data">
 
 @csrf
 
@@ -421,6 +421,325 @@ class="w-full rounded-xl border-gray-300 px-4 py-3">
 
 </div>
 
+<!-- Pièce d'identité -->
+
+<div class="mb-8 mt-8">
+
+    <div class="flex items-start gap-4 mb-5">
+
+        <div class="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl">
+            🪪
+        </div>
+
+        <div>
+            <h3 class="text-xl font-bold text-gray-900">
+                Vérification de votre identité
+            </h3>
+
+            <p class="text-sm text-gray-500 mt-1">
+                Fournissez le recto et le verso d'une pièce d'identité
+                lisible afin de permettre la vérification de votre profil.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- Information -->
+
+    <div class="mb-6 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+
+        <div class="flex items-start gap-3">
+
+            <div class="text-xl">
+                🔒
+            </div>
+
+            <div>
+
+                <p class="font-semibold text-blue-900">
+                    Vos documents restent confidentiels
+                </p>
+
+                <p class="text-sm text-blue-800 mt-1">
+                    Ces documents sont utilisés uniquement dans le cadre
+                    de la vérification de votre identité.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="grid md:grid-cols-2 gap-6">
+
+
+        <!-- RECTO -->
+
+        <div>
+
+            <label class="block font-semibold text-gray-800 mb-3">
+                Recto de la pièce d'identité
+                <span class="text-red-500">*</span>
+            </label>
+
+
+            <label
+                for="piece_identite_recto"
+                class="group block cursor-pointer"
+            >
+
+                <div
+                    class="relative min-h-[260px] rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 hover:border-blue-500 hover:bg-blue-50 transition overflow-hidden"
+                >
+
+                    <!-- Zone par défaut -->
+
+                    <div
+                        id="rectoPlaceholder"
+                        class="absolute inset-0 flex flex-col items-center justify-center text-center p-6"
+                    >
+
+                        <div class="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center text-3xl mb-4">
+                            📄
+                        </div>
+
+                        <p class="font-semibold text-gray-800">
+                            Ajouter le recto
+                        </p>
+
+                        <p class="text-sm text-gray-500 mt-1">
+                            Cliquez pour sélectionner votre document
+                        </p>
+
+                        <span class="mt-3 text-xs text-gray-400">
+                            JPG, PNG, WEBP ou PDF • 5 Mo maximum
+                        </span>
+
+                    </div>
+
+
+                    <!-- Aperçu -->
+
+                    <div
+                        id="rectoPreviewContainer"
+                        class="hidden absolute inset-0 bg-white"
+                    >
+
+                        <img
+                            id="rectoPreview"
+                            class="w-full h-full object-contain"
+                            alt="Aperçu du recto"
+                        >
+
+                        <div
+                            id="rectoPdfPreview"
+                            class="hidden absolute inset-0 flex flex-col items-center justify-center bg-gray-50"
+                        >
+
+                            <div class="text-5xl mb-3">
+                                📄
+                            </div>
+
+                            <p class="font-semibold text-gray-800">
+                                Document PDF sélectionné
+                            </p>
+
+                            <p
+                                id="rectoFileName"
+                                class="text-sm text-gray-500 mt-1 px-4 text-center"
+                            ></p>
+
+                        </div>
+
+
+                        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white px-4 py-3 text-sm">
+                            Cliquer pour remplacer le document
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </label>
+
+
+            <input
+                type="file"
+                id="piece_identite_recto"
+                name="piece_identite_recto"
+                accept="image/jpeg,image/png,image/webp,application/pdf"
+                class="hidden"
+                onchange="previewIdentityDocument(
+                    this,
+                    'rectoPreviewContainer',
+                    'rectoPlaceholder',
+                    'rectoPreview',
+                    'rectoPdfPreview',
+                    'rectoFileName'
+                )"
+            >
+
+
+            @error('piece_identite_recto')
+
+                <p class="text-red-600 text-sm mt-2">
+                    {{ $message }}
+                </p>
+
+            @enderror
+
+        </div>
+
+
+
+        <!-- VERSO -->
+
+        <div>
+
+            <label class="block font-semibold text-gray-800 mb-3">
+                Verso de la pièce d'identité
+                <span class="text-red-500">*</span>
+            </label>
+
+
+            <label
+                for="piece_identite_verso"
+                class="group block cursor-pointer"
+            >
+
+                <div
+                    class="relative min-h-[260px] rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 hover:border-blue-500 hover:bg-blue-50 transition overflow-hidden"
+                >
+
+                    <!-- Zone par défaut -->
+
+                    <div
+                        id="versoPlaceholder"
+                        class="absolute inset-0 flex flex-col items-center justify-center text-center p-6"
+                    >
+
+                        <div class="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center text-3xl mb-4">
+                            📄
+                        </div>
+
+                        <p class="font-semibold text-gray-800">
+                            Ajouter le verso
+                        </p>
+
+                        <p class="text-sm text-gray-500 mt-1">
+                            Cliquez pour sélectionner votre document
+                        </p>
+
+                        <span class="mt-3 text-xs text-gray-400">
+                            JPG, PNG, WEBP ou PDF • 5 Mo maximum
+                        </span>
+
+                    </div>
+
+
+                    <!-- Aperçu -->
+
+                    <div
+                        id="versoPreviewContainer"
+                        class="hidden absolute inset-0 bg-white"
+                    >
+
+                        <img
+                            id="versoPreview"
+                            class="w-full h-full object-contain"
+                            alt="Aperçu du verso"
+                        >
+
+                        <div
+                            id="versoPdfPreview"
+                            class="hidden absolute inset-0 flex flex-col items-center justify-center bg-gray-50"
+                        >
+
+                            <div class="text-5xl mb-3">
+                                📄
+                            </div>
+
+                            <p class="font-semibold text-gray-800">
+                                Document PDF sélectionné
+                            </p>
+
+                            <p
+                                id="versoFileName"
+                                class="text-sm text-gray-500 mt-1 px-4 text-center"
+                            ></p>
+
+                        </div>
+
+
+                        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white px-4 py-3 text-sm">
+                            Cliquer pour remplacer le document
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </label>
+
+
+            <input
+                type="file"
+                id="piece_identite_verso"
+                name="piece_identite_verso"
+                accept="image/jpeg,image/png,image/webp,application/pdf"
+                class="hidden"
+                onchange="previewIdentityDocument(
+                    this,
+                    'versoPreviewContainer',
+                    'versoPlaceholder',
+                    'versoPreview',
+                    'versoPdfPreview',
+                    'versoFileName'
+                )"
+            >
+
+
+            @error('piece_identite_verso')
+
+                <p class="text-red-600 text-sm mt-2">
+                    {{ $message }}
+                </p>
+
+            @enderror
+
+        </div>
+
+    </div>
+
+
+    <!-- Conseil -->
+
+    <div class="mt-5 flex items-start gap-3 rounded-2xl bg-gray-50 border border-gray-200 p-4">
+
+        <span class="text-xl">
+            💡
+        </span>
+
+        <div class="text-sm text-gray-600">
+
+            <p class="font-semibold text-gray-800 mb-1">
+                Conseil
+            </p>
+
+            <p>
+                Assurez-vous que votre pièce est entièrement visible,
+                nette et lisible. Évitez les photos floues ou trop sombres.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 <input type="hidden" name="latitude" id="latitude">
 
@@ -478,6 +797,77 @@ Envoyer ma demande
 
 
 <script>
+
+    function previewIdentityDocument(
+    input,
+    previewContainerId,
+    placeholderId,
+    previewId,
+    pdfPreviewId,
+    fileNameId
+) {
+
+    const file = input.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    const previewContainer =
+        document.getElementById(previewContainerId);
+
+    const placeholder =
+        document.getElementById(placeholderId);
+
+    const preview =
+        document.getElementById(previewId);
+
+    const pdfPreview =
+        document.getElementById(pdfPreviewId);
+
+    const fileName =
+        document.getElementById(fileNameId);
+
+
+    placeholder.classList.add('hidden');
+
+    previewContainer.classList.remove('hidden');
+
+
+    // Si c'est une image
+
+    if (file.type.startsWith('image/')) {
+
+        preview.classList.remove('hidden');
+
+        pdfPreview.classList.add('hidden');
+
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+
+            preview.src = event.target.result;
+
+        };
+
+        reader.readAsDataURL(file);
+
+    }
+
+
+    // Si c'est un PDF
+
+    else if (file.type === 'application/pdf') {
+
+        preview.classList.add('hidden');
+
+        pdfPreview.classList.remove('hidden');
+
+        fileName.textContent = file.name;
+
+    }
+
+}
 
 function toggleMenu(){
 

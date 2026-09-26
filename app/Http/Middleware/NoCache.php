@@ -12,10 +12,21 @@ class NoCache
     {
         $response = $next($request);
 
-        return $response->withHeaders([
-            'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',
-            'Pragma' => 'no-cache',
-            'Expires' => '0',
-        ]);
+        $response->headers->set(
+    'Cache-Control',
+    'no-cache, no-store, max-age=0, must-revalidate'
+);
+
+$response->headers->set(
+    'Pragma',
+    'no-cache'
+);
+
+$response->headers->set(
+    'Expires',
+    '0'
+);
+
+return $response;
     }
 }

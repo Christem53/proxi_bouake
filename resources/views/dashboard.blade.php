@@ -114,8 +114,14 @@ class="relative text-gray-600 hover:text-blue-600 text-2xl">
             </p>
 
             <p class="text-sm text-gray-500">
-                Client
-            </p>
+    @if(Auth::user()->role === 'prestataire')
+        Prestataire
+    @elseif(Auth::user()->role === 'admin')
+        Administrateur
+    @else
+        Client
+    @endif
+</p>
 
         </div>
 

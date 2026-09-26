@@ -8,18 +8,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\Prestataire;
 
 class ProfileController extends Controller
 {
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
-    {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
-    }
+public function edit(Request $request): View
+{
+    $user = $request->user();
+
+    $demandePrestataire = Prestataire::where('user_id', $user->id)
+        ->latest()
+        ->first();
+
+    return view('profile.edit', [
+        'user' => $user,
+        'demandePrestataire' => $demandePrestataire,
+    ]);
+}
 
     /**
      * Update the user's profile information.

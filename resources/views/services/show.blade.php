@@ -57,14 +57,22 @@ Mes demandes
 <div class="relative">
 
 
-<button 
+<button
 onclick="toggleMenu()"
 class="flex items-center gap-3">
 
 
-<div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-blue-600 text-white flex items-center justify-center font-bold">
 
-{{ strtoupper(substr(Auth::user()->name,0,1)) }}
+    @if(Auth::user()->photo)
+        <img
+            src="{{ asset('storage/' . Auth::user()->photo) }}"
+            alt="Photo de profil"
+            class="w-full h-full object-cover"
+        >
+    @else
+        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+    @endif
 
 </div>
 
@@ -78,7 +86,13 @@ class="flex items-center gap-3">
 
 
 <p class="text-sm text-gray-500">
-Client
+    @if(Auth::user()->role === 'prestataire')
+        Prestataire
+    @elseif(Auth::user()->role === 'admin')
+        Administrateur
+    @else
+        Client
+    @endif
 </p>
 
 </div>
@@ -163,7 +177,7 @@ class="w-full text-left px-5 py-3 text-red-600 hover:bg-gray-100">
 @if($prestation->image)
 
 
-<img 
+<img
 src="{{ asset('storage/'.$prestation->image) }}"
 onclick="openImage(this.src)"
 class="w-full h-[450px] object-cover cursor-pointer hover:scale-105 transition">
@@ -210,7 +224,7 @@ Galerie photos
 
 
 
-<img 
+<img
 src="{{ asset('storage/'.$image->image) }}"
 onclick="openImage(this.src)"
 class="h-32 w-full object-cover rounded-xl shadow cursor-pointer hover:scale-105 transition">
@@ -330,7 +344,7 @@ Informations du prestataire
 
 <p>
 
-👤 
+👤
 {{ $prestation->prestataire?->user?->name ?? 'Prestataire' }}
 
 </p>
@@ -339,7 +353,7 @@ Informations du prestataire
 
 <p class="mt-2">
 
-🏢 
+🏢
 {{ $prestation->prestataire?->nom_entreprise ?? 'Entreprise non définie' }}
 
 </p>
@@ -348,7 +362,7 @@ Informations du prestataire
 
 <p class="mt-2">
 
-📞 
+📞
 {{ $prestation->prestataire?->whatsapp ?? 'Contact non disponible' }}
 
 </p>
@@ -357,7 +371,7 @@ Informations du prestataire
 
 <p class="mt-2">
 
-📍 
+📍
 {{ $prestation->prestataire?->ville ?? 'Ville non définie' }}
 
 </p>

@@ -49,14 +49,22 @@ Mes demandes
 <div class="relative">
 
 
-<button 
+<button
 onclick="toggleMenu()"
 class="flex items-center gap-3">
 
 
-<div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-blue-600 text-white flex items-center justify-center font-bold">
 
-{{ strtoupper(substr(Auth::user()->name,0,1)) }}
+    @if(Auth::user()->photo)
+        <img
+            src="{{ asset('storage/' . Auth::user()->photo) }}"
+            alt="Photo de profil"
+            class="w-full h-full object-cover"
+        >
+    @else
+        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+    @endif
 
 </div>
 
@@ -223,7 +231,7 @@ class="w-full h-48 object-cover">
 <div class="w-full h-48 bg-gray-100 flex items-center justify-center">
 
 
-<i 
+<i
 data-lucide="{{ $prestation->category->icon }}"
 class="w-8 h-8 text-blue-600"
 aria-hidden="true">
@@ -246,7 +254,7 @@ aria-hidden="true">
 <div class="flex items-center gap-3 mb-4">
 
 
-<i 
+<i
 data-lucide="{{ $prestation->category->icon }}"
 class="w-8 h-8 text-blue-600"
 aria-hidden="true">

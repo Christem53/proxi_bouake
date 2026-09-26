@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Prestataire;
 use App\Models\Prestation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PrestataireController extends Controller
 {
@@ -44,34 +45,25 @@ class PrestataireController extends Controller
 
     public function accepter($id)
 {
-
     $prestataire = Prestataire::findOrFail($id);
 
+    // Récupérer l'utilisateur associé
+    $user = $prestataire->user;
 
-    // Modifier le statut de la demande
-
+    // Accepter la demande
     $prestataire->update([
-
-        'statut' => 'accepte'
-
+        'statut' => 'accepte',
+        'photo' => $user->photo,
     ]);
 
-
-
-    // Modifier le rôle de l'utilisateur
-
-    $prestataire->user->update([
-
+    // Donner le rôle prestataire à l'utilisateur
+    $user->update([
         'role' => 'prestataire'
-
     ]);
-
-
 
     return redirect()
         ->route('prestataires.index')
-        ->with('success','Prestataire accepté avec succès');
-
+        ->with('success', 'Prestataire accepté avec succès');
 }
 
 
@@ -207,6 +199,32 @@ public function reactiverPrestation($id)
         ->route('admin.prestations.index')
         ->with('success','Prestation réactivée avec succès');
 
+}
+
+/**
+ * Afficher une pièce d'identité
+ */
+public function piece(Prestataire $prestataire, string $type)
+{
+    // Vérifier que le type demandé est autorisé
+    if (!in_array($type, ['recto', 'verso'])) {
+        abort(404);
+    }
+
+    // Récupérer le chemin du document
+    $path = $type === 'recto'
+        ? $prestataire->piece_identite_recto
+        : $prestataire->piece_identite_verso;
+
+    // Vérifier que le document existe
+    if (!$path || !Storage::disk('local')->exists($path)) {
+        abort(404);
+    }
+
+    // Afficher le document sans le rendre public
+    return response()->file(
+        Storage::disk('local')->path($path)
+    );
 }
 
 }

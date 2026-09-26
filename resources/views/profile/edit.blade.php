@@ -85,9 +85,13 @@ class="flex items-center gap-3">
 
 
 <p class="text-sm text-gray-500">
-
-Client
-
+    @if(Auth::user()->role === 'prestataire')
+        Prestataire
+    @elseif(Auth::user()->role === 'admin')
+        Administrateur
+    @else
+        Client
+    @endif
 </p>
 
 </div>
@@ -262,26 +266,98 @@ Sécurité
 
 <div class="bg-white rounded-3xl shadow p-8 mt-8">
 
-@if(Auth::user()->role == 'client')
+    @if(Auth::user()->role == 'client')
 
-<a href="{{ route('demande.create') }}"
-class="text-gray-600 hover:text-blue-600">
+        @if($demandePrestataire && $demandePrestataire->statut === 'en_attente')
 
-🚀 Devenir prestataire
+            <!-- DEMANDE EN COURS -->
 
-</a>
+            <div class="flex items-start gap-4">
+
+                <div class="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center text-2xl">
+                    ⏳
+                </div>
+
+                <div>
+
+                    <h3 class="text-lg font-bold text-gray-900">
+                        Demande en cours de traitement
+                    </h3>
+
+                    <p class="mt-2 text-gray-600">
+                        Votre demande pour devenir prestataire est actuellement
+                        en cours de traitement.
+                    </p>
+
+                    <p class="mt-2 text-sm text-gray-500">
+                        Veuillez patienter pendant que notre équipe examine
+                        votre demande.
+                    </p>
+
+                </div>
+
+            </div>
 
 
-@elseif(Auth::user()->role == 'prestataire')
+        @elseif($demandePrestataire && $demandePrestataire->statut === 'refuse')
 
-<a href="{{ route('prestations.index') }}"
-class="text-gray-600 hover:text-blue-600">
+            <!-- DEMANDE REFUSÉE -->
 
-➕ Publier une prestation
+            <div class="flex items-start gap-4">
 
-</a>
+                <div class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center text-2xl">
+                    ❌
+                </div>
 
-@endif
+                <div>
+
+                    <h3 class="text-lg font-bold text-gray-900">
+                        Demande refusée
+                    </h3>
+
+                    <p class="mt-2 text-gray-600">
+                        Votre précédente demande pour devenir prestataire
+                        n'a pas été acceptée.
+                    </p>
+
+                    <a
+                        href="{{ route('demande.create') }}"
+                        class="inline-flex items-center gap-2 mt-4 px-5 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition"
+                    >
+                        🚀 Faire une nouvelle demande
+                    </a>
+
+                </div>
+
+            </div>
+
+
+        @else
+
+            <!-- AUCUNE DEMANDE -->
+
+            <a
+                href="{{ route('demande.create') }}"
+                class="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 font-semibold transition"
+            >
+                🚀 Devenir prestataire
+            </a>
+
+        @endif
+
+
+    @elseif(Auth::user()->role == 'prestataire')
+
+        <!-- PRESTATAIRE ACCEPTÉ -->
+
+        <a
+            href="{{ route('prestations.index') }}"
+            class="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 font-semibold transition"
+        >
+            ➕ Publier une prestation
+        </a>
+
+    @endif
 
 </div>
 

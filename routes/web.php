@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // Page vitrine ProxiBouaké
-Route::get('/', 
+Route::get('/',
     [HomeController::class,'index']
 )->name('home');
 
@@ -208,6 +208,11 @@ Route::prefix('admin')
         Route::post('/prestataires/{id}/refuser',
             [AdminPrestataireController::class,'refuser']
         )->name('prestataires.refuser');
+
+
+    Route::get('/prestataires/{prestataire}/piece/{type}',
+    [AdminPrestataireController::class, 'piece']
+)->name('admin.prestataires.piece');
 
 
 

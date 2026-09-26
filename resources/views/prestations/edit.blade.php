@@ -46,9 +46,17 @@ Mes prestations
 class="flex items-center gap-3">
 
 
-<div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-blue-600 text-white flex items-center justify-center font-bold">
 
-{{ strtoupper(substr(Auth::user()->name,0,1)) }}
+    @if(Auth::user()->photo)
+        <img
+            src="{{ asset('storage/' . Auth::user()->photo) }}"
+            alt="Photo de profil"
+            class="w-full h-full object-cover"
+        >
+    @else
+        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+    @endif
 
 </div>
 
